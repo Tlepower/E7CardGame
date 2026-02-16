@@ -70,6 +70,9 @@ signal unit_died(unit: Node)
 ## Emitted when a unit is revived (for future expansion)
 signal unit_revived(unit: Node)
 
+## Emitted when a unit's death prevention is activited
+signal death_prevented(unit: Node)
+
 # ============================================================================
 # STATUS EFFECT SIGNALS
 # ============================================================================

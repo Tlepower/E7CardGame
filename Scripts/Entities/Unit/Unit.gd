@@ -80,6 +80,12 @@ var _control_effects: Array[Dictionary] = []  # {control_type: Enums.ControlType
 var taunt_target: Node = null
 
 # ============================================================================
+# Death Prevention
+# ============================================================================
+
+var has_death_prevention: bool = false
+
+# ============================================================================
 # INITIALIZATION
 # ============================================================================
 
@@ -172,6 +178,19 @@ func get_hp_percent() -> float:
 func die() -> void:
 	if not is_alive():
 		return  # Already dead
+	
+	# Check death prevention
+	if has_death_prevention:
+		EventBus.log_debug("%s death prevented! HP set to 1" % name, "Unit")
+		current_hp = 1
+		has_death_prevention = false  # Consume death prevention
+		
+		# Emit signal
+		EventBus.death_prevented.emit(self)
+		
+		# Trigger passive for surviving death
+		_trigger_passive(Enums.TriggerCondition.ON_HP_THRESHOLD, {"prevented_death": true})
+		return
 	
 	current_hp = 0
 	EventBus.unit_died.emit(self)
@@ -588,6 +607,26 @@ func _to_string() -> String: # changed from to_string to _to_string
 func set_battle_manager(manager: Node) -> void:
 	battle_manager = manager
 
+# ==============================================================================
+# Death Prevention
+# ==============================================================================
+
+func set_death_prevention(value: bool) -> void:
+	has_death_prevention = value
+	if value:
+		EventBus.log_debug("%s gained death prevention" % name, "Unit")
+	else:
+		EventBus.log_debug("%s lost death prevention" % name, "Unit")
+
+func get_death_prevention():
+	return has_death_prevention
+	
+func grant_death_prevention():
+	set_death_prevention(true)
+
+func remove_death_prevention():
+	set_death_prevention(false)
+
 ## Clean up when unit is removed
 func cleanup() -> void:
 	# Remove all status effects
@@ -597,6 +636,9 @@ func cleanup() -> void:
 	# Deactivate passive
 	if passive != null:
 		passive.deactivate()
+		
+	if has_death_prevention != null:
+		has_death_prevention = false
 	
 	status_effects.clear()
 	_control_effects.clear()
