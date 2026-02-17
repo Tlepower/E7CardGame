@@ -1,14 +1,7 @@
 extends Node
-class_name TurnManager
+class_name TurnManager5
 ## TurnManager - Manages turn phases and unit actions
 ## Handles: START -> MAIN -> END phase transitions
-
-# ============================================================================
-# SIGNALS
-# ============================================================================
-
-## Emitted when human player explicitly ends their turn
-signal player_turn_ended
 
 # ============================================================================
 # TURN STATE
@@ -22,9 +15,6 @@ var current_phase: Enums.TurnPhase = Enums.TurnPhase.START
 
 ## Has the player taken any action this turn?
 var turn_actions_taken: bool = false
-
-## Is currently waiting for human player input?
-var waiting_for_player: bool = false
 
 # ============================================================================
 # REFERENCES
@@ -54,7 +44,6 @@ func start_turn(unit: Node) -> void:
 	current_unit = unit
 	current_phase = Enums.TurnPhase.START
 	turn_actions_taken = false
-	waiting_for_player = false
 	
 	EventBus.turn_started.emit(unit)
 	EventBus.log_debug("=== %s's turn started ===" % unit.name, "Turn")
@@ -76,6 +65,7 @@ func _execute_start_phase() -> void:
 	# Get mana system
 	var mana_system = battle_manager.get_node_or_null("ManaSystem")
 	if mana_system != null:
+		# Find which player owns this unit
 		var player = _find_player_for_unit(current_unit)
 		if player != null:
 			mana_system.reset_mana(player)
@@ -94,30 +84,18 @@ func advance_to_main_phase() -> void:
 	current_phase = Enums.TurnPhase.MAIN
 	EventBus.turn_phase_changed.emit(current_phase, current_unit)
 	
-	var owner_player = _find_player_for_unit(current_unit)
+	EventBus.log_debug("Main phase - waiting for player action", "Turn")
 	
-	if owner_player != null and owner_player.is_ai:
-		# AI handles its own turn then ends it
+	# If this is an AI unit, let AI take action
+	var player = _find_player_for_unit(current_unit)
+	if player != null and player.is_ai:
 		await _handle_ai_turn()
-	else:
-		# Human player: suspend here until they call request_end_turn()
-		waiting_for_player = true
-		EventBus.log_debug("Waiting for player input (press ENTER to end turn)...", "Turn")
-		await player_turn_ended
-		waiting_for_player = false
-
-## Called by the UI or TestBattle input handler to end the human player's turn
-func request_end_turn() -> void:
-	if not waiting_for_player:
-		EventBus.log_debug("request_end_turn called but not waiting for player", "Turn")
-		return
 	
-	player_turn_ended.emit()
-	await end_turn()
 
 ## Handle AI taking their turn
 func _handle_ai_turn() -> void:
 	# TODO: AI decision making
+	# For now, AI just ends turn after a delay
 	await get_tree().create_timer(1.0).timeout
 	await end_turn()
 
@@ -158,13 +136,16 @@ func _auto_basic_attack() -> void:
 	
 	EventBus.log_debug("No action taken, auto basic attack", "Turn")
 	
+	# Get targeting system
 	var targeting_system = battle_manager.get_node_or_null("TargetingSystem")
 	if targeting_system == null:
 		push_error("TurnManager: TargetingSystem not found")
 		return
 	
+	# Get all units
 	var all_units = battle_manager.get_all_units()
 	
+	# Select lowest HP enemy
 	var enemy_team = Enums.get_opposite_team(current_unit.team)
 	var enemies = []
 	for unit in all_units:
@@ -176,12 +157,18 @@ func _auto_basic_attack() -> void:
 		return
 	
 	var target = targeting_system.select_lowest_hp_enemy(enemies)
+	
+	# Use basic attack
 	if target != null:
 		await current_unit.use_basic_attack(target)
 
 # ============================================================================
 # ACTION EXECUTION
 # ============================================================================
+
+## Execute an action (play card, use ability, etc.)
+func execute_action() -> void:
+	turn_actions_taken = true
 
 ## Mark action as taken
 func mark_action_taken() -> void:
@@ -190,10 +177,6 @@ func mark_action_taken() -> void:
 ## Check if player can take action
 func can_take_action() -> bool:
 	return current_phase == Enums.TurnPhase.MAIN
-
-## Check if waiting for human player
-func is_waiting_for_player() -> bool:
-	return waiting_for_player
 
 # ============================================================================
 # HELPERS
@@ -204,9 +187,11 @@ func _find_player_for_unit(unit: Node) -> Node:
 	if unit == null or battle_manager == null:
 		return null
 	
+	# Try to get from battle manager
 	if battle_manager.has_method("get_player_by_team"):
 		return battle_manager.get_player_by_team(unit.team)
 	
+	# Fallback: try direct access
 	var player = battle_manager.get_node_or_null("Player")
 	var enemy = battle_manager.get_node_or_null("Enemy")
 	
@@ -224,22 +209,30 @@ func _find_player_for_unit(unit: Node) -> Node:
 # QUERIES
 # ============================================================================
 
+## Get current unit
 func get_current_unit() -> Node:
 	return current_unit
 
+## Get current phase
 func get_current_phase() -> Enums.TurnPhase:
 	return current_phase
 
+## Check if it's currently this unit's turn
 func is_unit_turn(unit: Node) -> bool:
 	return current_unit == unit
 
+## Check if actions have been taken
 func has_actions_taken() -> bool:
 	return turn_actions_taken
 
+# ============================================================================
+# DEBUG
+# ============================================================================
+
+## Get debug info
 func get_debug_info() -> String:
-	return "Unit: %s | Phase: %s | Actions: %s | Waiting: %s" % [
+	return "Unit: %s | Phase: %s | Actions: %s" % [
 		current_unit.name if current_unit else "None",
 		Enums.phase_to_string(current_phase),
-		turn_actions_taken,
-		waiting_for_player
+		turn_actions_taken
 	]
