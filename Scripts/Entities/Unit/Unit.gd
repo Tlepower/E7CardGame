@@ -79,11 +79,13 @@ var _control_effects: Array[Dictionary] = []  # {control_type: Enums.ControlType
 ## Unit that is taunting this unit (if taunted)
 var taunt_target: Node = null
 
-# ============================================================================
-# Death Prevention
-# ============================================================================
-
+# Did you live on 1 hp
 var has_death_prevention: bool = false
+
+# chances for countering with basic attack (50% to counter = 0.5) 
+var counter_chance: float = 0.0
+
+var has_countered: bool = false
 
 # ============================================================================
 # INITIALIZATION
@@ -607,6 +609,46 @@ func _to_string() -> String: # changed from to_string to _to_string
 func set_battle_manager(manager: Node) -> void:
 	battle_manager = manager
 
+# Counter
+
+# Set counter chance
+func set_counter_chance(chance: float) -> void:
+	counter_chance = clampf(chance,0.0,1.0)
+
+# Get counter chance
+func get_counter_chance() -> float:
+	return counter_chance
+
+# add counter chance
+func add_counter_chance(chance: float) -> void:
+	counter_chance = clampf(counter_chance + chance,0.0,1.0)
+
+# subtract counter chance
+func subtract_counter_chance(chance: float) -> void:
+	counter_chance = clampf(counter_chance - chance,0.0,1.0)
+	
+# check if you get to counter
+func should_counter() -> bool:
+	if counter_chance <= 0:
+		return false
+	return randf() <= counter_chance
+
+## Perform counter attack
+func counter_attack(attacker: Node) -> void:
+	if not is_alive() or not attacker.is_alive():
+		return
+	
+	if is_controlled():
+		EventBus.log_debug("%s is controlled, cannot counter" % name, "Unit")
+		return
+	
+	EventBus.log_debug("%s counters %s!" % [name, attacker.name], "Unit")
+	
+	# Counter with basic attack
+	if !has_countered:
+		await use_basic_attack(attacker)
+		has_countered = false
+	has_countered = true
 # ==============================================================================
 # Death Prevention
 # ==============================================================================

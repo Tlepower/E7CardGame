@@ -167,7 +167,10 @@ func _input(event: InputEvent) -> void:
 		
 		KEY_H:
 			print_hands()
-		
+			
+		KEY_P:
+			print("\n[Player] will will play a card")
+			await play_Card1()
 		KEY_Q:
 			get_tree().quit()
 
@@ -202,6 +205,14 @@ func print_hands() -> void:
 	for card in battle_manager.enemy.get_hand():
 		print("  - %s (Cost: %d)" % [card.get_display_name(), card.get_mana_cost()])
 	print("=============\n")
+
+# ============================================================================
+# Playing Cards, Cards and Ultmate
+# ============================================================================
+
+func play_Card1():
+	
+	return;
 
 # ============================================================================
 # HELPER FUNCTIONS

@@ -49,6 +49,9 @@ class_name CardData
 ## Can this card's effects ignore passives?
 @export var ignore_passives: bool = false
 
+## Card tags for card effects
+@export var tags: Array[Resource] = [] # Array[Cardtags]
+
 # ============================================================================
 # OWNERSHIP (for skill cards)
 # ============================================================================
@@ -171,6 +174,7 @@ func duplicate_data() -> CardData:
 	new_data.target_type = target_type
 	new_data.ignore_passives = ignore_passives
 	new_data.owner_unit_name = owner_unit_name
+	new_data.tags = tags
 	
 	# Shallow copy effects (they're resources, shared is fine)
 	new_data.effects = effects.duplicate()
@@ -195,3 +199,40 @@ func get_card_color() -> Color:
 func get_rarity() -> String:
 	# This could be expanded later
 	return "Common"
+
+# ===========================================================================
+# Tag methods
+# ===========================================================================
+
+## Check if card has a specific tag
+func has_tag(tag_type: CardTag.TagType) -> bool:
+	for tag in tags:
+		if tag != null and tag.tag_type == tag_type:
+			return true
+	return false
+
+## Get tag of specific type
+func get_tag(tag_type: CardTag.TagType) -> Resource:
+	for tag in tags:
+		if tag != null and tag.tag_type == tag_type:
+			return tag
+	return null
+
+## Add tag to card
+func add_tag(tag: Resource) -> void:
+	if tag != null and tag not in tags:
+		tags.append(tag)
+
+## Remove tag from card
+func remove_tag(tag_type: CardTag.TagType) -> void:
+	for i in range(tags.size() - 1, -1, -1):
+		if tags[i] != null and tags[i].tag_type == tag_type:
+			tags.remove_at(i)
+
+## Get all tag display strings
+func get_tag_display_strings() -> Array[String]:
+	var displays: Array[String] = []
+	for tag in tags:
+		if tag != null:
+			displays.append(tag.get_display_string())
+	return displays

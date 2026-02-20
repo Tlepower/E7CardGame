@@ -185,7 +185,8 @@ enum TriggerCondition {
 	ON_CRIT,
 	ON_KILL,
 	ON_MISS,
-	ON_COUNTER
+	ON_COUNTER,
+	ON_BATTLE_START
 }
 
 # ============================================================================
