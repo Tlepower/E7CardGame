@@ -117,8 +117,24 @@ func request_end_turn() -> void:
 
 ## Handle AI taking their turn
 func _handle_ai_turn() -> void:
-	# TODO: AI decision making
-	await get_tree().create_timer(1.0).timeout
+	# Get AI decision maker
+	var ai = battle_manager.get_node_or_null("AIDecisionMaker")
+	if ai == null:
+		EventBus.log_debug("No AI found, defaulting to auto-attack", "Turn")
+		await get_tree().create_timer(1.0).timeout
+		await end_turn()
+		return
+	
+	# Find AI player
+	var ai_player = _find_player_for_unit(current_unit)
+	if ai_player == null:
+		EventBus.log_debug("Cannot find AI player", "Turn")
+		await end_turn()
+		return
+	
+	# Let AI decide and execute action
+	await ai.take_turn(ai_player, current_unit)
+	##await get_tree().create_timer(1.0).timeout
 	await end_turn()
 
 ## End the current turn
