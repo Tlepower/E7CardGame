@@ -104,6 +104,7 @@ func initialize_from_data(data: UnitData, team_side: Enums.Team) -> void:
 	
 	# Initialize stats
 	if data.base_stats != null:
+		data.base_stats.initialize_gear_stats() ##
 		current_stats = data.base_stats.duplicate_stats()
 		current_hp = current_stats.max_hp
 	else:

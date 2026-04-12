@@ -64,6 +64,10 @@ var damage_taken_multiplier: float = 1.0
 # COMPUTED STATS (read-only, calculated on demand)
 # ============================================================================
 
+## Initialize the base stats from gears, weapons, and other stat modifications
+func initialize_gear_stats() -> void:
+	var c = 5
+
 ## Get effective ATK with all modifiers applied
 func get_effective_atk() -> int:
 	return int(base_atk * atk_percent)

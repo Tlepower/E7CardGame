@@ -42,9 +42,9 @@ func initialize(player_units: Array[Node], enemy_units: Array[Node]) -> void:
 
 ## Set starting AR for all units
 func _initialize_starting_ar() -> void:
-	# Give units random starting AR (0-50%) for variety
+	# Give units random starting AR (0-5%) for variety
 	for unit in all_units:
-		var starting_ar = randf_range(0.0, 50.0)
+		var starting_ar = randf_range(0.0, 5.0)
 		unit.set_ar(starting_ar)
 	
 	EventBus.log_debug("Starting AR randomized for all units", "TurnOrder")
@@ -89,17 +89,11 @@ func _simulate_ar_until_ready() -> Node:
 	var iterations = 0
 	
 	while iterations < max_iterations:
-		# Find unit with highest speed
-		var fastest_speed = _get_highest_speed()
-		if fastest_speed <= 0:
-			push_error("TurnOrderSystem: no units with speed > 0")
-			return null
-		
 		# Calculate AR gain per tick for each unit
-		# AR gain = (unit_speed / fastest_speed) * 100
-		# This ensures the fastest unit gains 100 AR per tick
+		# AR gain = (unit_speed / 0.1) * 100
+		# This ensures that AR gained is not effected by who is alive
 		
-		var tick_size = 100.0 / fastest_speed
+		var tick_size = 0.1
 		
 		# Tick all units
 		for unit in all_units:

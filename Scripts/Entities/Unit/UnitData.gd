@@ -22,6 +22,9 @@ class_name UnitData
 ## Rarity or class (for future use)
 @export_enum("Common", "Rare", "Epic", "Legendary") var rarity: String = "Common"
 
+## Types (for future use)
+@export_enum("Fire","Water","G","Light","Dark") var Type: String = "Fire"
+
 # ============================================================================
 # STATS
 # ============================================================================
