@@ -59,6 +59,7 @@ enum StatusEffectType {
 	DOT,        ## Damage over time (bleed, burn, poison)
 	SHIELD,     ## Barrier/shield effect
 	IMMUNITY,   ## Prevents debuffs
+	BLOCK,      ## Prevents buffs
 	UNIQUE      ## Special effects that don't fit categories
 }
 
@@ -89,7 +90,7 @@ enum ControlType {
 	FREEZE,         ## Cannot act, may have other effects (take more dmg, etc.)
 	SLEEP,          ## Cannot act, wakes on damage
 	TAUNT,          ## Must target taunter
-	PROVOKE,        ## Same as taunt (different name for variety)
+	PROVOKE,        ## Forces single target abilities on them
 	SILENCE,        ## Cannot use skills (passives still work)
 	RESTRICT        ## Cannot use ultimates specifically
 }

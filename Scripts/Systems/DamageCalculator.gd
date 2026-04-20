@@ -33,7 +33,7 @@ func calculate_damage(
 	
 	# Check for crit
 	var is_crit = force_crit or roll_crit(attacker_stats.crit_rate)
-	var crit_multiplier = 0.0
+	var crit_multiplier = 1.0
 	if is_crit:
 		crit_multiplier = attacker_stats.crit_damage
 	
