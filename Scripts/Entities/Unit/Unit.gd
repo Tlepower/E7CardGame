@@ -217,6 +217,11 @@ func apply_status_effect(effect: Resource) -> void:
 		EventBus.log_debug("Unit '%s' is immune to debuff" % name, "StatusEffect")
 		return
 	
+	# Check block
+	if has_block() and effect.is_positive():
+		EventBus.log_debug("Unit '%s' is immune to buff" % name, "StatusEffect")
+		return
+	
 	# Check effect resistance for debuffs
 	if effect.is_negative() and not _check_effect_lands(effect):
 		EventBus.log_debug("Unit '%s' resisted debuff" % name, "StatusEffect")
@@ -341,6 +346,12 @@ func get_control_effects() -> Array[Dictionary]:
 func has_immunity() -> bool:
 	for effect in status_effects:
 		if effect.effect_type == Enums.StatusEffectType.IMMUNITY:
+			return true
+	return false
+
+func has_block() -> bool:
+	for effect in status_effects:
+		if effect.effect_type == Enums.StatusEffectType.BLOCK:
 			return true
 	return false
 
