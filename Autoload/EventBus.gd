@@ -32,6 +32,9 @@ signal card_drawn(card: Node, player: Node)
 ## Emitted when a card is discarded from hand
 signal card_discarded(card: Node, player: Node)
 
+## Emitted when a card is negated
+signal card_negated(card: Node, player: Node)
+
 ## Emitted when basic attack is used
 signal basic_attack_used(attacker: Node, target: Node)
 

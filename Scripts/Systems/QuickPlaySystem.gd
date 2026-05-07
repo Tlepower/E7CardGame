@@ -27,6 +27,9 @@ var consecutive_passes: int = 0
 ## Maximum stack size (15 effects)
 const MAX_STACK_SIZE: int = 15
 
+## Last card in the stack 
+var last_card: Node = null
+
 # ============================================================================
 # REFERENCES
 # ============================================================================
@@ -141,6 +144,9 @@ func player_plays_card(card: Node, player: Node, target, caster: Node) -> void:
 	
 	# Reset consecutive passes
 	consecutive_passes = 0
+	
+	# update the last card on the stack
+	last_card = effect_stack.back()
 	
 	# Pass priority to other player
 	_switch_priority()
@@ -259,6 +265,9 @@ func is_window_active() -> bool:
 ## Get player with current priority
 func get_priority_player() -> Node:
 	return priority_player
+	
+func get_last_card() -> Node:
+	return last_card
 
 # ============================================================================
 # FORCED CLOSURE

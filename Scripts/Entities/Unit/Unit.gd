@@ -158,6 +158,9 @@ func take_damage(amount: int, is_true_damage: bool = false) -> void:
 func heal(amount: int, source: Node = null) -> void:
 	if amount <= 0 or not is_alive():
 		return
+		
+	if has_antiheal():
+		return
 	
 	var old_hp = current_hp
 	current_hp = mini(current_hp + amount, current_stats.max_hp)
@@ -352,6 +355,12 @@ func has_immunity() -> bool:
 func has_block() -> bool:
 	for effect in status_effects:
 		if effect.effect_type == Enums.StatusEffectType.BLOCK:
+			return true
+	return false
+
+func has_antiheal() -> bool:
+	for effect in status_effects:
+		if effect.effect_type == Enums.StatusEffectType.ANTIHEAL:
 			return true
 	return false
 

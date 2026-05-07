@@ -201,6 +201,15 @@ func get_targeting_system(game_state: Node) -> Node:
 	
 	return game_state.get_node_or_null("TargetingSystem")
 
+func get_quickplay_system(game_state: Node) -> Node:
+	if game_state == null:
+		return null
+	
+	if game_state.has_method("get_quick_play_system"):
+		return game_state.get_quick_play_system()
+	
+	return game_state.get_node_or_null("QuickPlaySystem")
+
 ## Get all units from game state
 func get_all_units(game_state: Node) -> Array:
 	if game_state == null:

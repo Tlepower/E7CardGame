@@ -60,6 +60,7 @@ enum StatusEffectType {
 	SHIELD,     ## Barrier/shield effect
 	IMMUNITY,   ## Prevents debuffs
 	BLOCK,      ## Prevents buffs
+	ANTIHEAL,   ## Prevents Healing
 	UNIQUE      ## Special effects that don't fit categories
 }
 

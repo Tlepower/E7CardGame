@@ -23,6 +23,16 @@ var in_hand: bool = false
 var is_being_dragged: bool = false
 
 # ============================================================================
+# PLAYABLE
+# ============================================================================
+
+## Can this card be countered
+var can_be_negated: bool = false
+
+## Is this card negated?
+var is_negated: bool = false
+
+# ============================================================================
 # STATIC COUNTER FOR INSTANCE IDs
 # ============================================================================
 
@@ -308,6 +318,15 @@ func get_card_color() -> Color:
 ## Get icon
 func get_icon() -> Texture2D:
 	return card_data.icon if card_data else null
+	
+func get_negated() -> bool:
+	return is_negated
+
+func get_can_be_negated() -> bool:
+	return can_be_negated
+
+func set_negated_status(status) -> void:
+	is_negated = status
 
 # ============================================================================
 # UTILITY
