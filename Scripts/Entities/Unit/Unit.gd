@@ -305,7 +305,7 @@ func _handle_effect_stacking(existing: Resource, new_effect: Resource) -> void:
 
 ## Check if effect lands (resistance check)
 func _check_effect_lands(effect: Resource) -> bool:
-	if effect == null or not effect.has_method("get_source_unit"):
+	if effect.source_unit == null:
 		return true  # No source unit, auto-land
 	
 	var source_unit = effect.source_unit

@@ -51,6 +51,14 @@ enum TargetType {
 # ============================================================================
 # STATUS EFFECTS
 # ============================================================================
+## Elemental types for interesting matchup and drafting
+enum ElementType {
+	SCARLET,
+	AZURE,
+	JADE,
+	GOLD,
+	ONYX
+}
 
 enum StatusEffectType {
 	BUFF,       ## Positive effect (can be dispelled)
@@ -189,6 +197,28 @@ enum TriggerCondition {
 	ON_MISS,
 	ON_COUNTER,
 	ON_BATTLE_START
+}
+
+# ============================================================================
+# Gear Set 
+# ============================================================================
+enum GearSet {
+	ATK_SET,
+	DEF_SET,
+	SPD_SET,
+	WIND_SET,
+	HP_SET,
+	COUNTER_SET,
+	IMMUNITY_SET,
+	CRIT_SET,
+	STRIVE_SET,
+	FOLLOWUP_SET,
+	TIMEWAVE_SET,
+	LIFESTEAL_SET,
+	HEAL_SET,
+	HIT_SET,
+	EFF_RATE_SET,
+	EFF_RES_SET
 }
 
 # ============================================================================

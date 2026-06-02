@@ -1,11 +1,11 @@
 extends StatusEffect
-class_name AntiHead
+class_name AntiHeal
 
 # Called when the node enters the scene tree for the first time.
 func _init(turns: int = 2) -> void:
 	effect_name = "AntiHeal"
 	description = "Cannot be healed"
-	effect_type = Enums.StatusEffectType.AntiHeal
+	effect_type = Enums.StatusEffectType.ANTIHEAL
 	base_duration = turns
 	
 	can_be_dispelled = true

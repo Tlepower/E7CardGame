@@ -1,45 +1,61 @@
 extends CardEffect
 class_name CounterEffect
+## CounterEffect - Grants counter buff to target
 
-enum CounterType {
-	ANY,
-	SKILL_ONLY,
-	BASIC_ONLY,
-	ULTMATE_ONLY,
-}
+# ============================================================================
+# COUNTER PROPERTIES
+# ============================================================================
 
-var counter_type: CounterType = CounterType.ANY
-var target_card =  null
+## Counter chance per stack
+@export var counter_chance: float = 0.5
 
-func _init(card : Node) -> void:
-	effect_name = "Negate"
-	description = "Negates a card"
-	target_type = Enums.TargetType.SINGLE_ENEMY
-	target_card = card
-	
+## Duration in turns
+@export var duration: int = 2
+
+## Number of stacks to apply
+@export var stack_count: int = 1
+
+# ============================================================================
+# INITIALIZATION
+# ============================================================================
+
+func _init(chance: float = 0.5, turns: int = 2, stacks: int = 1) -> void:
+	effect_name = "Grant Counter"
+	description = "Grant %.0f%% counter chance for %d turns" % (chance * 100) # and turn
+	target_type = Enums.TargetType.SINGLE_ALLY
+	counter_chance = chance
+	duration = turns
+	stack_count = stacks
+
+# ============================================================================
+# EXECUTION
+# ============================================================================
+
 func execute_on_single_target(caster: Node, target: Node, game_state: Node) -> void:
-	var quickplay = get_quickplay_system(game_state)
-	var last_card = quickplay.get_last_card()
-	
-	if not can_counter(last_card.card):
-		return 
-	
-	if not last_card.card.get_can_be_negated():
+	if not target.is_alive():
 		return
 	
-	# change card's is_countered to turn
-	last_card.card.set_negated_status(true) 
+	# Create counter buff
+	var counter = Counter.new(counter_chance, duration)
+	counter.initialize(caster, target, duration)
+	counter.stack_count = stack_count
 	
-func can_counter(target_card: Card) -> bool:
-	match counter_type:
-		CounterType.BASIC_ONLY:
-			if target_card.card_data.card_type != Enums.CardType.BASIC:
-				return false
-		CounterType.SKILL_ONLY:
-			if target_card.card_data.card_type != Enums.CardType.SKILL:
-				return false
-	return true
+	# Apply through status system
+	var status_system = get_status_effect_system(game_state)
+	if status_system != null:
+		status_system.apply_effect(target, counter)
+	else:
+		target.apply_status_effect(counter)
+	
+	EventBus.log_debug("%s granted Counter (%.0f%%) to %s" % [
+		caster.name, 
+		counter_chance * 100, 
+		target.name
+	], "CounterEffect")
+
+# ============================================================================
+# DESCRIPTION
+# ============================================================================
 
 func get_description() -> String:
-	return "Pass"
-	
+	return "Grant %.0f%% counter chance for %d turns" % (counter_chance * 100) # desciption

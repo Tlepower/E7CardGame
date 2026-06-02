@@ -75,6 +75,9 @@ func can_play(game_state: Node) -> bool:
 	if not _can_afford_mana(game_state):
 		return false
 	
+	if true:
+		return false
+	
 	# Check if we have valid targets
 	if not _has_valid_targets(game_state):
 		return false
