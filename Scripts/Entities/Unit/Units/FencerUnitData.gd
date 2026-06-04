@@ -64,30 +64,17 @@ static func create_skill1() -> CardData:
 	skill.owner_unit_name = "Fencer"
 	
 	# Fast multi-hit damage
-	var damage1 = DamageEffect.new()
-	damage1.is_atk_based = true
-	damage1.atk_multiplier = 0.7  # 70% ATK
-	damage1.damage_type = Enums.DamageType.PHYSICAL
-	damage1.def_ignore = 0.2  # 20% DEF ignore
-	damage1.can_crit = true
-	
-	var damage2 = DamageEffect.new()
-	damage2.is_atk_based = true
-	damage2.atk_multiplier = 0.7  # 70% ATK
-	damage2.damage_type = Enums.DamageType.PHYSICAL
-	damage2.def_ignore = 0.2
-	damage2.can_crit = true
-	
-	var damage3 = DamageEffect.new()
-	damage3.is_atk_based = true
-	damage3.atk_multiplier = 0.7  # 70% ATK
-	damage3.damage_type = Enums.DamageType.PHYSICAL
-	damage3.def_ignore = 0.2
-	damage3.can_crit = true
+	var damage = DamageEffect.new()
+	damage.is_atk_based = true
+	damage.atk_multiplier = 0.7  # 70% ATK
+	damage.damage_type = Enums.DamageType.PHYSICAL
+	damage.def_ignore = 0.2  # 20% DEF ignore
+	damage.hit_count = 3 
+	damage.can_crit = true
 	
 	# Total: 3 hits × 70% = 210% ATK damage!
 	
-	skill.effects = [damage1, damage2, damage3]
+	skill.effects.append(damage)
 	
 	return skill
 
@@ -115,7 +102,8 @@ static func create_skill2() -> CardData:
 	counter_effect.status_effect_template = counter
 	counter_effect.duration = 2
 	
-	skill.effects = [evasion_effect, counter_effect]
+	skill.effects.append(evasion_effect)
+	skill.effects.append(counter_effect)
 	
 	return skill
 
@@ -150,6 +138,8 @@ static func create_ultimate() -> UltimateData:
 	evasion_buff.status_effect_template = evasion
 	evasion_buff.duration = 2
 	
-	ult.effects = [damage, taunt_effect, evasion_buff]
+	ult.effects.append(damage)
+	ult.effects.append(taunt_effect)
+	ult.effects.append(evasion_buff)
 	
 	return ult

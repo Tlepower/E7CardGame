@@ -23,6 +23,9 @@ var battle_manager: Node = null
 ## Current hit points
 var current_hp: int = 0
 
+## Current maximum hit points
+var current_max_hp: int = 0
+
 ## Current stats (modified by buffs/debuffs)
 var current_stats: UnitStats = null
 
@@ -87,6 +90,13 @@ var counter_chance: float = 0.0
 
 var has_countered: bool = false
 
+# chance for evade an attack (30% to evade = 0.3)
+var evasion_chance: float = 0.0
+
+# the percent that healing is less (0.0 - 1.0, 0.5 = 50% healing reduction)
+var healing_reduction: float = 0.0
+
+
 # ============================================================================
 # INITIALIZATION
 # ============================================================================
@@ -107,6 +117,7 @@ func initialize_from_data(data: UnitData, team_side: Enums.Team) -> void:
 		data.base_stats.initialize_gear_stats() ##
 		current_stats = data.base_stats.duplicate_stats()
 		current_hp = current_stats.max_hp
+		current_max_hp = current_stats.max_hp
 	else:
 		push_error("Unit '%s': base_stats is null" % name)
 		return
@@ -162,8 +173,20 @@ func heal(amount: int, source: Node = null) -> void:
 	if has_antiheal():
 		return
 	
+	# Apply healing reduction
+	var actual_amount = amount
+	if healing_reduction > 0.0:
+		actual_amount = int(amount * (1.0 - healing_reduction))
+		if actual_amount < amount:
+			EventBus.log_debug("%s healing reduced: %d -> %d (%.0f%% reduction)" %[
+				name,
+				amount,
+				actual_amount,
+				healing_reduction * 100
+			], "Unit")
+	
 	var old_hp = current_hp
-	current_hp = mini(current_hp + amount, current_stats.max_hp)
+	current_hp = mini(current_hp + actual_amount, current_max_hp)
 	var actual_heal = current_hp - old_hp
 	
 	if actual_heal > 0:
@@ -176,9 +199,9 @@ func is_alive() -> bool:
 
 ## Get HP as percentage (0.0 - 1.0)
 func get_hp_percent() -> float:
-	if current_stats == null or current_stats.max_hp == 0:
+	if current_stats == null or current_stats.max_hp == 0 or current_max_hp == 0:
 		return 0.0
-	return float(current_hp) / float(current_stats.max_hp)
+	return float(current_hp) / float(current_max_hp)
 
 ## Unit dies
 func die() -> void:
@@ -186,7 +209,7 @@ func die() -> void:
 		return  # Already dead
 	
 	# Check death prevention
-	if has_death_prevention:
+	if has_death_prevention and current_max_hp != 0:
 		EventBus.log_debug("%s death prevented! HP set to 1" % name, "Unit")
 		current_hp = 1
 		has_death_prevention = false  # Consume death prevention
@@ -284,6 +307,16 @@ func tick_status_effects(phase: Enums.TurnPhase) -> void:
 			# Check if effect expired
 			if effect.duration <= 0:
 				remove_status_effect(effect)
+
+func detonate_status_effects(effect: Resource) -> void:
+	if effect == null or effect not in status_effects:
+		return
+		
+	effect.detonate()
+	EventBus.status_effect_detonated.emit(self, effect)
+	
+	remove_status_effect(effect)
+	 
 
 ## Find existing effect by name
 func _find_existing_effect(effect_name: String) -> Resource:
@@ -670,6 +703,25 @@ func counter_attack(attacker: Node) -> void:
 		await use_basic_attack(attacker)
 		has_countered = false
 	has_countered = true
+
+# ============================================================================
+# EVASION SYSTEM
+# ============================================================================
+ 
+## Set evasion chance
+func set_evasion_chance(chance: float) -> void:
+	evasion_chance = clampf(chance, 0.0, 1.0)
+
+## Get evasion chance
+func get_evasion_chance() -> float:
+	return evasion_chance
+	
+## Check if should evade (random roll)
+func should_evade() -> bool:
+	if evasion_chance <= 0.0:
+		return false
+	return randf() <= evasion_chance
+
 # ==============================================================================
 # Death Prevention
 # ==============================================================================

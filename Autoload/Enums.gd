@@ -53,11 +53,12 @@ enum TargetType {
 # ============================================================================
 ## Elemental types for interesting matchup and drafting
 enum ElementType {
-	SCARLET,
-	AZURE,
-	JADE,
-	GOLD,
-	ONYX
+	SCARLET, ## its the red element
+	AZURE,   ## its the blue element
+	JADE,    ## its the green element
+	GOLD,    ## its the light element
+	ONYX,    ## its the dark element
+	BLANK,   ## no element at all
 }
 
 enum StatusEffectType {

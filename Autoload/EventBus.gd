@@ -89,6 +89,9 @@ signal status_effect_removed(target: Node, effect: Resource)
 ## Emitted when a status effect ticks (at turn start/end)
 signal status_effect_ticked(target: Node, effect: Resource)
 
+## Emitted when a status effect is detonated
+signal status_effect_detonated(target: Node, effect: Resource)
+
 ## Emitted when status effects are cleansed (debuffs removed)
 signal debuffs_cleansed(target: Node, count: int)
 

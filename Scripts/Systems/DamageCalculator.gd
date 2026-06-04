@@ -87,6 +87,17 @@ func apply_damage(
 	
 	if amount <= 0:
 		return
+		
+	# Check for evasion FIRST (before any damage)
+	if target.has_method("should_evade") and target.should_evade():
+		EventBus.log_debug("%s EVADED attack! (%.0f%% chance)" % [
+			target.name,
+			target.get_evasion_chance() * 100
+			], "Damage")
+			# Emit evade event (if signal exists)
+		if EventBus.has_signal("unit_evaded"):
+			EventBus.unit_evaded.emit(target, source, amount)
+		return  # No damage, no counter
 	
 	var damage_to_apply = amount
 	
