@@ -6,22 +6,22 @@ class_name Poison
 # INITIALIZATION
 # ============================================================================
 
-func _init(atk_mult: float = 0.2, turns: int = 4) -> void:
+func _init(hp_mult: float = 0.2, turns: int = 4) -> void:
 	effect_name = "Poison"
-	description = "Takes poison damage each turn"
+	description = "Takes poison damage each turn, based off target's max hp"
 	effect_type = Enums.StatusEffectType.DOT
 	base_duration = turns
 	
 	# DOT properties
-	is_atk_based = true
-	atk_multiplier = atk_mult
-	damage_per_tick = 0  # Will be calculated from ATK
+	is_hp_based = true
+	hp_multiplier = hp_mult
+	damage_per_tick = 0  # Will be calculated from target's max hp
 	
 	can_be_cleansed = true
 	ticks_on_turn_start = true
 	duration_decreases_on_start = true
 	stack_type = Enums.StackType.STACK_COUNT  # Poison can stack
-	max_stacks = 3
+	max_stacks = 5
 
 # ============================================================================
 # TICK BEHAVIOR

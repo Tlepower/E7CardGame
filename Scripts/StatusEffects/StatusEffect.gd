@@ -102,8 +102,14 @@ var target_unit: Node = null
 ## Is this DOT based on caster's ATK?
 @export var is_atk_based: bool = false
 
+## Is this DOT based on target's MAX HP?
+@export var is_hp_based: bool = false
+
 ## ATK multiplier if ATK-based (e.g., 0.3 = 30% of caster ATK per tick)
 @export var atk_multiplier: float = 0.0
+
+## MAX HP multiplier if HP-based (e.g., 0.1 = 10% of target MAX per tick)
+@export var hp_multiplier: float = 0.0
 
 # ============================================================================
 # SHIELD PROPERTIES (for shield effects)
@@ -274,6 +280,10 @@ func _apply_stat_modifiers() -> void:
 				stats.add_effectiveness(modifier_value)
 			"effect_resistance":
 				stats.add_effect_resistance(modifier_value)
+			"counter_rate":
+				stats.add_counter_rate(modifier_value)
+			"evasion":
+				stats.add_evasion(modifier_value)
 			"damage_multiplier":
 				stats.damage_multiplier *= modifier_value
 			"damage_taken_multiplier":
@@ -303,6 +313,10 @@ func _remove_stat_modifiers() -> void:
 				stats.add_effectiveness(-modifier_value)
 			"effect_resistance":
 				stats.add_effect_resistance(-modifier_value)
+			"counter_rate":
+				stats.add_counter_rate(-modifier_value)
+			"evasion":
+				stats.add_evasion(-modifier_value)
 			"damage_multiplier":
 				stats.damage_multiplier /= modifier_value
 			"damage_taken_multiplier":
@@ -323,6 +337,11 @@ func _apply_dot_damage() -> void:
 	if is_atk_based and source_unit != null:
 		var source_stats = source_unit.get_stats()
 		damage = int(source_stats.get_effective_atk() * atk_multiplier)
+	
+	# Calculate MAX-based damage
+	if is_hp_based:
+		var target_stats = target_unit.get_stats()
+		damage = int(target_stats.get_stat_value(Enums.StatType.MAX_HP) * hp_multiplier)
 	
 	if damage > 0:
 		target_unit.take_damage(damage, true)  # DOT is usually true damage

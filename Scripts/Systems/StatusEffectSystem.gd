@@ -47,9 +47,9 @@ func _check_effect_lands(effect: Resource, target: Node) -> bool:
 	var source_stats = effect.source_unit.get_stats()
 	var target_stats = target.get_stats()
 	
-	# Base 85% chance + effectiveness - resistance
-	var land_chance = 0.85 + source_stats.effectiveness - target_stats.effect_resistance
-	land_chance = clampf(land_chance, 0.15, 1.0)  # Min 15%, max 100%
+	# Base 90% chance + effectiveness - resistance
+	var land_chance = 0.90 + source_stats.effectiveness - target_stats.effect_resistance
+	land_chance = clampf(land_chance, 0.0, 0.9)  # Min 0%, max 90%
 	
 	return randf() <= land_chance
 

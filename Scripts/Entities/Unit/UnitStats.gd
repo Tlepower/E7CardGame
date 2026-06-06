@@ -19,6 +19,12 @@ class_name UnitStats
 ## Speed stat - determines turn order (1-200+ range typical)
 @export var speed: int = 100
 
+## Counter stat - chances for countering with basic attack (50% to counter = 0.5) 
+@export var counter_rate : float = 0.0
+
+## Evasion stat - chance for evade an attack (30% to evade = 0.3)
+@export var evasion: float = 0.0
+
 # ============================================================================
 # OFFENSIVE STATS
 # ============================================================================
@@ -105,6 +111,10 @@ func get_stat_value(stat_type: Enums.StatType) -> float:
 			return def_percent
 		Enums.StatType.SPEED_PERCENT:
 			return speed_percent
+		Enums.StatType.COUNTER_RATE:
+			return counter_rate
+		Enums.StatType.EVASION:
+			return evasion
 		_:
 			push_error("Unknown stat type: %s" % stat_type)
 			return 0.0
@@ -143,6 +153,12 @@ func add_effectiveness(amount: float) -> void:
 ## Add flat effect resistance (clamped to 0-1)
 func add_effect_resistance(amount: float) -> void:
 	effect_resistance = clampf(effect_resistance + amount, 0.0, 1.0)
+	
+func add_counter_rate(amount: float) -> void:
+	counter_rate = clampf(counter_rate + amount, 0.0, 1.0)
+
+func add_evasion(amount: float) -> void:
+	evasion = clampf(evasion + amount, 0.0, 1.0)
 
 # ============================================================================
 # RESET FUNCTIONS
@@ -173,6 +189,8 @@ func duplicate_stats() -> UnitStats:
 	new_stats.crit_damage = crit_damage
 	new_stats.effectiveness = effectiveness
 	new_stats.effect_resistance = effect_resistance
+	new_stats.counter_rate = counter_rate
+	new_stats.evasion = evasion
 	
 	# Copy modifiers
 	new_stats.atk_percent = atk_percent
@@ -198,6 +216,8 @@ func copy_from(other: UnitStats) -> void:
 	speed_percent = other.speed_percent
 	damage_multiplier = other.damage_multiplier
 	damage_taken_multiplier = other.damage_taken_multiplier
+	counter_rate = other.counter_rate
+	evasion = other.evasion
 
 ## Get a debug string representation
 func _to_string() -> String: # Changed to_string to _to_string

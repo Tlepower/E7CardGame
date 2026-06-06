@@ -349,8 +349,8 @@ func _check_effect_lands(effect: Resource) -> bool:
 	var effectiveness = source_unit.current_stats.effectiveness if source_unit.current_stats else 0.0
 	var resistance = current_stats.effect_resistance
 	
-	var land_chance = 0.85 + effectiveness - resistance  # 85% base + eff - res
-	land_chance = clampf(land_chance, 0.15, 1.0)  # Min 15%, max 100%
+	var land_chance = 0.90 + effectiveness - resistance  # 90% base + eff - res
+	land_chance = clampf(land_chance, 0.0, 0.9)  # Min 0%, max 90%
 	
 	return randf() <= land_chance
 
@@ -685,7 +685,8 @@ func subtract_counter_chance(chance: float) -> void:
 func should_counter() -> bool:
 	if counter_chance <= 0:
 		return false
-	return randf() <= counter_chance
+	return randf() <= current_stats.counter_rate
+	# return randf() <= counter_chance
 
 ## Perform counter attack
 func counter_attack(attacker: Node) -> void:
@@ -720,7 +721,8 @@ func get_evasion_chance() -> float:
 func should_evade() -> bool:
 	if evasion_chance <= 0.0:
 		return false
-	return randf() <= evasion_chance
+	return randf() <= current_stats.evasion
+	# return randf() <= evasion_chance
 
 # ==============================================================================
 # Death Prevention

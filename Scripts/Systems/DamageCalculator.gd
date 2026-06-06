@@ -101,6 +101,8 @@ func apply_damage(
 	
 	var damage_to_apply = amount
 	
+	# Handle Damage Sharing
+	
 	# Handle shields (unless true damage)
 	if not is_true_damage:
 		damage_to_apply = _apply_damage_to_shields(target, damage_to_apply)

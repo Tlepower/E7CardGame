@@ -156,6 +156,8 @@ enum StatType {
 	SPEED,
 	CRIT_RATE,
 	CRIT_DAMAGE,
+	COUNTER_RATE,
+	EVASION,
 	EFFECTIVENESS,      ## For applying debuffs
 	EFFECT_RESISTANCE,  ## For resisting debuffs
 	ATK_PERCENT,        ## Multiplicative ATK modifier

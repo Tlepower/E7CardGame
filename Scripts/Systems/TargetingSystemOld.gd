@@ -1,5 +1,5 @@
 extends Node
-class_name TargetingSystem
+class_name TargetingSystemOld
 ## TargetingSystem - Handles target selection, validation, and auto-targeting
 ## Used by cards, abilities, and effects to find valid targets
 
@@ -14,35 +14,23 @@ func get_valid_targets_for_ability(
 	all_units: Array
 ) -> Array:
 	
-	# Determine if this is a single-target ability (stealth matters)
-	var is_single_target = target_type in [
-		Enums.TargetType.SINGLE_ENEMY,
-		Enums.TargetType.SINGLE_ALLY,
-		Enums.TargetType.RANDOM_ENEMY,
-		Enums.TargetType.RANDOM_ALLY,
-		Enums.TargetType.LOWEST_HP_ENEMY,
-		Enums.TargetType.HIGHEST_HP_ENEMY,
-		Enums.TargetType.LOWEST_HP_ALLY,
-		Enums.TargetType.HIGHEST_HP_ALLY
-	]
-	
 	var valid_targets: Array = []
 	
 	match target_type:
 		Enums.TargetType.SINGLE_ENEMY:
-			valid_targets = _get_alive_enemies(caster_team, all_units, is_single_target)
+			valid_targets = _get_alive_enemies(caster_team, all_units)
 		
 		Enums.TargetType.SINGLE_ALLY:
 			valid_targets = _get_alive_allies(caster_team, all_units)
 		
 		Enums.TargetType.ALL_ENEMIES:
-			valid_targets = _get_alive_enemies(caster_team, all_units, is_single_target)
+			valid_targets = _get_alive_enemies(caster_team, all_units)
 		
 		Enums.TargetType.ALL_ALLIES:
 			valid_targets = _get_alive_allies(caster_team, all_units)
 		
 		Enums.TargetType.ALL_UNITS:
-			valid_targets = _get_all_alive_units(all_units, caster_team, is_single_target)
+			valid_targets = _get_all_alive_units(all_units)
 		
 		Enums.TargetType.SELF:
 			# Self is handled specially, but we return empty for now
@@ -53,16 +41,16 @@ func get_valid_targets_for_ability(
 			# Filter out self (caller must remove caster from list)
 		
 		Enums.TargetType.RANDOM_ENEMY:
-			valid_targets = _get_alive_enemies(caster_team, all_units, is_single_target)
+			valid_targets = _get_alive_enemies(caster_team, all_units)
 		
 		Enums.TargetType.RANDOM_ALLY:
 			valid_targets = _get_alive_allies(caster_team, all_units)
 		
 		Enums.TargetType.LOWEST_HP_ENEMY:
-			valid_targets = _get_alive_enemies(caster_team, all_units, is_single_target)
+			valid_targets = _get_alive_enemies(caster_team, all_units)
 		
 		Enums.TargetType.HIGHEST_HP_ENEMY:
-			valid_targets = _get_alive_enemies(caster_team, all_units, is_single_target)
+			valid_targets = _get_alive_enemies(caster_team, all_units)
 		
 		Enums.TargetType.LOWEST_HP_ALLY:
 			valid_targets = _get_alive_allies(caster_team, all_units)
@@ -253,17 +241,13 @@ func select_lowest_hp_percent_ally(allies: Array) -> Node:
 # FILTERING HELPERS
 # ============================================================================
 
-## Get all alive enemies (with optional stealth filtering for single-target)
-func _get_alive_enemies(caster_team: Enums.Team, all_units: Array, is_single_target: bool = true) -> Array:
+## Get all alive enemies
+func _get_alive_enemies(caster_team: Enums.Team, all_units: Array) -> Array:
 	var enemies: Array = []
 	var enemy_team = Enums.get_opposite_team(caster_team)
 	
 	for unit in all_units:
 		if unit.team == enemy_team and unit.is_alive():
-			# Only filter stealth for SINGLE-TARGET abilities
-			# AOE abilities hit stealthed units!
-			if is_single_target and unit.has_status_effect("Stealth"):
-				continue  # Skip stealthed units for single-target
 			enemies.append(unit)
 	
 	return enemies
@@ -278,17 +262,12 @@ func _get_alive_allies(caster_team: Enums.Team, all_units: Array) -> Array:
 	
 	return allies
 
-## Get all alive units (filtered for stealth if single-target and enemies)
-func _get_all_alive_units(all_units: Array, caster_team: Enums.Team = Enums.Team.PLAYER, is_single_target: bool = true) -> Array:
+## Get all alive units
+func _get_all_alive_units(all_units: Array) -> Array:
 	var alive: Array = []
-	var enemy_team = Enums.get_opposite_team(caster_team)
 	
 	for unit in all_units:
 		if unit.is_alive():
-			# Only filter stealthed enemies for SINGLE-TARGET
-			# AOE hits stealthed units!
-			if is_single_target and unit.team == enemy_team and unit.has_status_effect("Stealth"):
-				continue  # Skip stealthed enemies for single-target
 			alive.append(unit)
 	
 	return alive

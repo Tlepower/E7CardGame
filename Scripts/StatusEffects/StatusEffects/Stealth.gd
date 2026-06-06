@@ -6,17 +6,16 @@ class_name Stealth
 # INITIALIZATION
 # ============================================================================
 
-func _init(turns: int = 99) -> void:
+func _init(turns: int = 2) -> void:
 	effect_name = "Stealth"
 	description = "Cannot be targeted (removed on damage)"
 	effect_type = Enums.StatusEffectType.BUFF
-	base_duration = turns  # Effectively permanent until hit
+	base_duration = turns 
 	
 	can_be_dispelled = true
 	ticks_on_turn_start = true
-	duration_decreases_on_start = false  # Doesn't decrease by time
-	stack_type = Enums.StackType.NO_STACK
-	is_permanent = true  # Only removed by damage or dispel
+	duration_decreases_on_start = true 
+	stack_type = Enums.StackType.NO_STACK  
 
 # ============================================================================
 # APPLICATION

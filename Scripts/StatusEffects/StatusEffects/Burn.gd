@@ -6,22 +6,20 @@ class_name Burn
 # INITIALIZATION
 # ============================================================================
 
-func _init(atk_mult: float = 0.3, turns: int = 3) -> void:
+func _init(dmg: int = 300, turns: int = 3) -> void:
 	effect_name = "Burn"
-	description = "Takes fire damage each turn"
+	description = "Takes fire damage each turn, can be detonated for more damage"
 	effect_type = Enums.StatusEffectType.DOT
 	base_duration = turns
 	
 	# DOT properties
-	is_atk_based = true
-	atk_multiplier = atk_mult
-	damage_per_tick = 0  # Will be calculated from ATK
+	damage_per_tick = dmg  # Will be calculated from ATK
 	
 	can_be_cleansed = true
 	ticks_on_turn_start = true
 	duration_decreases_on_start = true
 	stack_type = Enums.StackType.STACK_COUNT  # Burn can stack
-	max_stacks = 5
+	max_stacks = 10
 
 # ============================================================================
 # TICK BEHAVIOR
@@ -32,3 +30,15 @@ func on_tick() -> void:
 	
 	# Damage is applied by base StatusEffect._apply_dot_damage()
 	# which is called automatically during tick
+
+func detonate(target: Node) -> void:
+	target_unit = target
+	
+	if target_unit == null or not target_unit.is_alive():
+		return
+	
+	var damage = damage_per_tick * stack_count
+	
+	if damage > 0:
+		target_unit.take_damage(damage, true)  # DOT is usually true damage
+		EventBus.log_debug("%s takes %d detonation Burn damage" % [target_unit.name, damage], "StatusEffect")

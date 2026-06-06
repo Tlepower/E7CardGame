@@ -34,6 +34,8 @@ func execute_trigger(condition: Enums.TriggerCondition, data: Dictionary) -> voi
 	
 	# Grant stealth
 	var stealth = Stealth.new()
+	stealth.is_permanent = true
+	stealth.duration_decreases_on_start = false # Doesn't decrease turn 
 	stealth.initialize(owner_unit, owner_unit)
 	owner_unit.apply_status_effect(stealth)
 	
