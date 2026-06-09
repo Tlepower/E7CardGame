@@ -112,7 +112,7 @@ func _attack_single_target(caster: Node, target: Node, game_state: Node) -> void
 		
 		# Apply the damage
 		var is_true = (damage_type == Enums.DamageType.TRUE)
-		damage_calc.apply_damage(caster, target, damage_amount, is_true)
+		damage_calc.apply_damage(caster, target, damage_amount, game_state, is_true)
 		
 		# Apply additional effects (if chance succeeds)
 		if not additional_effects.is_empty() and randf() <= effect_chance:

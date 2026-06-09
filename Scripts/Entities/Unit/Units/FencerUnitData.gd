@@ -17,7 +17,7 @@ static func create() -> UnitData:
 	fencer.base_stats = create_stats()
 	
 	# Abilities
-	fencer.passive_script = load("res://Scripts/Passives/EvasionPassive.gd")
+	fencer.passive_script = create_passive()
 	fencer.skill1_card_data = create_skill1()
 	fencer.skill2_card_data = create_skill2()
 	fencer.ultimate_data = create_ultimate()
@@ -39,7 +39,7 @@ static func create_stats() -> UnitStats:
 
 static func create_passive() -> Script:
 	# Evasion passive - gains evasion at battle start
-	return load("res://Scripts/Passives/EvasionPassive.gd")
+	return load("res://Scripts/Passives/FullTestEvasion.gd")
 
 static func create_basic_attack() -> BasicAttackData:
 	var basic = BasicAttackData.new()

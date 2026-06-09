@@ -96,6 +96,10 @@ var evasion_chance: float = 0.0
 # the percent that healing is less (0.0 - 1.0, 0.5 = 50% healing reduction)
 var healing_reduction: float = 0.0
 
+# the percent of damage recieved from other allies
+# (0.0 - 0.5, 0.1 = 10% of damage done to other allies goes to this unit)
+var damage_share: float = 0.0
+
 
 # ============================================================================
 # INITIALIZATION
@@ -719,7 +723,7 @@ func get_evasion_chance() -> float:
 	
 ## Check if should evade (random roll)
 func should_evade() -> bool:
-	if evasion_chance <= 0.0:
+	if current_stats.evasion <= 0.0:
 		return false
 	return randf() <= current_stats.evasion
 	# return randf() <= evasion_chance

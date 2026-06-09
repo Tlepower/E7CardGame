@@ -177,6 +177,10 @@ func apply_aura_to_unit(unit: Node) -> void:
 				stats.add_effectiveness(modifier_value)
 			"effect_resistance":
 				stats.add_effect_resistance(modifier_value)
+			"counter_rate":
+				stats.add_counter_rate(modifier_value)
+			"evasion":
+				stats.add_evasion(modifier_value)
 
 ## Remove aura stat modifiers from a unit
 func remove_aura_from_unit(unit: Node) -> void:
@@ -202,6 +206,10 @@ func remove_aura_from_unit(unit: Node) -> void:
 				stats.add_effectiveness(-modifier_value)
 			"effect_resistance":
 				stats.add_effect_resistance(-modifier_value)
+			"counter_rate":
+				stats.add_counter_rate(-modifier_value)
+			"evasion":
+				stats.add_evasion(-modifier_value)
 
 # ============================================================================
 # CONDITIONAL CHECKS

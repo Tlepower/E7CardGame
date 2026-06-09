@@ -79,6 +79,7 @@ func apply_damage(
 	source: Node,
 	target: Node,
 	amount: int,
+	game_state: Node,
 	is_true_damage: bool = false
 ) -> void:
 	
@@ -92,7 +93,7 @@ func apply_damage(
 	if target.has_method("should_evade") and target.should_evade():
 		EventBus.log_debug("%s EVADED attack! (%.0f%% chance)" % [
 			target.name,
-			target.get_evasion_chance() * 100
+			target.current_stats.evasion * 100
 			], "Damage")
 			# Emit evade event (if signal exists)
 		if EventBus.has_signal("unit_evaded"):
@@ -101,10 +102,11 @@ func apply_damage(
 	
 	var damage_to_apply = amount
 	
-	# Handle Damage Sharing
-	
 	# Handle shields (unless true damage)
 	if not is_true_damage:
+		# Handle damage sharing
+		damage_to_apply = _apply_damage_share(target, damage_to_apply, game_state)
+		# Handle shields 
 		damage_to_apply = _apply_damage_to_shields(target, damage_to_apply)
 	
 	# Apply remaining damage to HP
@@ -165,6 +167,25 @@ func _get_shield_effects(target: Node) -> Array:
 	
 	return shields
 
+# apply the damage to all the units with damage share and returns the remaining damage
+func _apply_damage_share(target: Node, damage: int, game_state: Node) -> int:
+	var remaining_damage = damage
+
+	var all_units = game_state.get_all_units()
+	
+	for unit in all_units:
+		if unit != null and unit.team == target.team and unit.name != target.name:
+			var damage_share_dmg = remaining_damage * unit.damage_share
+			remaining_damage = remaining_damage - damage_share_dmg
+			unit.take_damage(damage_share_dmg, false)
+			
+			EventBus.log_debug("%s takes %d shared damage from %s" % [ 
+				unit,
+				damage_share_dmg,
+				target 
+				], "Damage")
+			
+	return remaining_damage
 # ============================================================================
 # MASS DAMAGE (for AOE attacks)
 # ============================================================================
@@ -173,6 +194,7 @@ func _get_shield_effects(target: Node) -> Array:
 func calculate_and_apply_damage_to_multiple(
 	attacker: Node,
 	targets: Array,
+	game_state: Node,
 	atk_multiplier: float = 1.0,
 	def_ignore: float = 0.0,
 	damage_multiplier: float = 1.0,
@@ -193,7 +215,7 @@ func calculate_and_apply_damage_to_multiple(
 		else:
 			damage = calculate_damage(attacker, target, atk_multiplier, def_ignore, damage_multiplier)
 		
-		apply_damage(attacker, target, damage, is_true_damage)
+		apply_damage(attacker, target, damage, game_state, is_true_damage)
 		results[target] = damage
 	
 	return results

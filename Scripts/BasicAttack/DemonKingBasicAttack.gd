@@ -42,7 +42,7 @@ func execute(caster: Node, target: Node, game_state: Node) -> void:
 		damage_multiplier
 	)
 	
-	damage_calc.apply_damage(caster, target, damage, false)
+	damage_calc.apply_damage(caster, target, damage, game_state, false)
 	
 	# Apply DEF debuff with chance
 	if randf() <= effect_chance:

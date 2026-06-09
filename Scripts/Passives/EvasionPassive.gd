@@ -41,6 +41,7 @@ func _on_battle_start() -> void:
 	
 	# Grant base evasion chance
 	owner_unit.set_evasion_chance(BASE_EVASION_CHANCE)
+	stat_modifiers = {"Evasion" : BASE_EVASION_CHANCE}
 	
 	EventBus.log_debug("%s gained %.0f%% evasion from Graceful Footwork" % [
 		owner_unit.name, 

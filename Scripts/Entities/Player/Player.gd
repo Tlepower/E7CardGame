@@ -43,7 +43,7 @@ func _ready() -> void:
 ## Initialize player with units and cards
 func initialize(unit_datas: Array, basic_card_datas: Array) -> void:
 	# Validate inputs
-	if unit_datas.size() != 3:
+	if unit_datas.size() > 3:
 		push_error("Player: must have exactly 3 units, got %d" % unit_datas.size())
 		return
 	

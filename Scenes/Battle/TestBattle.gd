@@ -68,7 +68,7 @@ func _on_phase_changed(phase: Enums.TurnPhase, unit: Node) -> void:
 	
 	if unit in player.get_units():
 		print("\n╔══════════════════════════════╗")
-		print("║     YOUR TURN: %s" % unit.name.rpad(16) + "║")
+		print("║     YOUR TURN: %s" % unit.name.rpad(14) + "║")
 		print("╠══════════════════════════════╣")
 		print("║  ENTER  → End turn           ║")
 		print("║  SPACE  → Show battle state  ║")
@@ -83,9 +83,11 @@ func _on_phase_changed(phase: Enums.TurnPhase, unit: Node) -> void:
 func create_player_units() -> Array:
 	print("Creating player units...")
 	return [
-		WarriorUnitData.create(),
-		MageUnitData.create(),
-		HealerUnitData.create()
+		#WarriorUnitData.create(),
+		#MageUnitData.create(),
+		#DemonKingUnitData.create()
+		ReaperVampireUnitData.create(),
+		FencerUnitData.create()
 	]
 
 func create_enemy_units() -> Array:
