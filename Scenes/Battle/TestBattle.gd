@@ -83,7 +83,7 @@ func _on_phase_changed(phase: Enums.TurnPhase, unit: Node) -> void:
 func create_player_units() -> Array:
 	print("Creating player units...")
 	return [
-		#WarriorUnitData.create(),
+		WarriorUnitData.create(),
 		#MageUnitData.create(),
 		#DemonKingUnitData.create()
 		ReaperVampireUnitData.create(),

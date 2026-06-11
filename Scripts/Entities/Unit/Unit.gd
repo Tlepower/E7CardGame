@@ -90,9 +90,6 @@ var counter_chance: float = 0.0
 
 var has_countered: bool = false
 
-# chance for evade an attack (30% to evade = 0.3)
-var evasion_chance: float = 0.0
-
 # the percent that healing is less (0.0 - 1.0, 0.5 = 50% healing reduction)
 var healing_reduction: float = 0.0
 
@@ -142,6 +139,8 @@ func initialize_from_data(data: UnitData, team_side: Enums.Team) -> void:
 	
 	# Initialize AR (starting at 0, will be randomized or set by battle manager)
 	action_readiness = 0.0
+	
+	_trigger_passive(Enums.TriggerCondition.ON_BATTLE_START, {})
 	
 	EventBus.log_debug("Unit '%s' initialized for team %s" % [name, Enums.team_to_string(team)], "Unit")
 
@@ -315,8 +314,16 @@ func tick_status_effects(phase: Enums.TurnPhase) -> void:
 func detonate_status_effects(effect: Resource) -> void:
 	if effect == null or effect not in status_effects:
 		return
-		
-	effect.detonate()
+	
+	# find the effect
+	var existing_effect = _find_existing_effect(effect.effect_name) 
+	if existing_effect == null:
+		return
+	
+	# check if it has a detonate effect and detonate the dot
+	if existing_effect.has_method("detonate"):
+		existing_effect.detonate(self)
+	
 	EventBus.status_effect_detonated.emit(self, effect)
 	
 	remove_status_effect(effect)
@@ -623,6 +630,11 @@ func _trigger_passive(condition: Enums.TriggerCondition, data: Dictionary) -> vo
 	if passive == null or not passive.is_active:
 		return
 	
+	# Check if unit has suppress status
+	for control in _control_effects:
+		if control.control_type == Enums.ControlType.SUPPRESS:
+			return
+	
 	# Check if unit can perform out-of-turn actions (if this is not their turn)
 	if condition != Enums.TriggerCondition.ON_TURN_START and condition != Enums.TriggerCondition.ON_TURN_END:
 		if not can_perform_out_of_turn_action():
@@ -712,14 +724,7 @@ func counter_attack(attacker: Node) -> void:
 # ============================================================================
 # EVASION SYSTEM
 # ============================================================================
- 
-## Set evasion chance
-func set_evasion_chance(chance: float) -> void:
-	evasion_chance = clampf(chance, 0.0, 1.0)
 
-## Get evasion chance
-func get_evasion_chance() -> float:
-	return evasion_chance
 	
 ## Check if should evade (random roll)
 func should_evade() -> bool:

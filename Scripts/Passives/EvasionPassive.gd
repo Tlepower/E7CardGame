@@ -40,7 +40,6 @@ func _on_battle_start() -> void:
 		return
 	
 	# Grant base evasion chance
-	owner_unit.set_evasion_chance(BASE_EVASION_CHANCE)
 	stat_modifiers = {"Evasion" : BASE_EVASION_CHANCE}
 	
 	EventBus.log_debug("%s gained %.0f%% evasion from Graceful Footwork" % [
@@ -60,7 +59,7 @@ func _update_evasion() -> void:
 		bonus_evasion = 0.10  # +10% when below 50% HP
 	
 	var total_evasion = BASE_EVASION_CHANCE + bonus_evasion
-	owner_unit.set_evasion_chance(total_evasion)
+	owner_unit.set_evasion_chance(total_evasion) # need to be changed 
 	
 	if bonus_evasion > 0:
 		EventBus.log_debug("%s evasion increased to %.0f%% (wounded)" % [

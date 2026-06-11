@@ -67,6 +67,12 @@ signal damage_dealt(source: Node, target: Node, final_amount: int, is_true_damag
 ## Emitted when a unit is healed
 signal unit_healed(target: Node, amount: int, source: Node)
 
+## Emitted when a unit counter attacks
+signal unit_counters(target: Node, amount: int, source: Node)
+
+## Emitted when a unit evades
+signal unit_evaded(target: Node, amount: int, source: Node)
+
 ## Emitted when a unit dies
 signal unit_died(unit: Node)
 

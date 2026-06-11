@@ -178,15 +178,15 @@ func _simulate_next_turn_in_snapshot(ar_snapshot: Dictionary) -> Node:
 		return ready_units[0]
 	
 	# Simulate AR ticks
-	var max_iterations = 100
+	var max_iterations = 1000
 	var iterations = 0
 	
 	while iterations < max_iterations:
-		var fastest_speed = _get_highest_speed_from_snapshot(ar_snapshot)
-		if fastest_speed <= 0:
-			return null
+		# var fastest_speed = _get_highest_speed_from_snapshot(ar_snapshot)
+		# if fastest_speed <= 0:
+			# return null
 		
-		var tick_size = 100.0 / fastest_speed
+		var tick_size = 0.1
 		
 		# Tick all units in snapshot
 		for unit in ar_snapshot.keys():
@@ -246,6 +246,15 @@ func set_ar(unit: Node, value: float) -> void:
 	
 	unit.set_ar(value)
 	recalculate_queue()
+
+func gain_turn(unit: Node) -> void:
+	var snapshot = _create_ar_snapshot()
+	var highest_ar = 0.0
+	for uni in snapshot:
+		if highest_ar <= snapshot[uni]:
+			highest_ar = snapshot[uni]
+	
+	set_ar(unit,max(100.0, highest_ar + 1))
 
 # ============================================================================
 # UNIT MANAGEMENT
