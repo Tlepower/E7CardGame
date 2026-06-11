@@ -179,11 +179,10 @@ func _apply_damage_share(target: Node, damage: int, game_state: Node) -> int:
 			remaining_damage = remaining_damage - damage_share_dmg
 			unit.take_damage(damage_share_dmg, false)
 			
-			if damage_share_dmg != 0:
-				EventBus.log_debug("%s takes %d shared damage from %s" % [ 
-					unit.name,
-					damage_share_dmg,
-					target.name
+			EventBus.log_debug("%s takes %d shared damage from %s" % [ 
+				unit,
+				damage_share_dmg,
+				target 
 				], "Damage")
 			
 	return remaining_damage

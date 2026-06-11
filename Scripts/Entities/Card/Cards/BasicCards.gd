@@ -122,7 +122,7 @@ static func create_dispel() -> CardData:
 	card.description = "Remove 2 buffs from an enemy"
 	card.card_type = Enums.CardType.BASIC
 	card.mana_cost = 2
-	card.is_quick_play = true ## Quick play
+	card.is_quick_play = false
 	card.target_type = Enums.TargetType.SINGLE_ENEMY
 	
 	var dispel = DispelEffect.new()

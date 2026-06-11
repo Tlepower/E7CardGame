@@ -32,11 +32,17 @@ func on_apply() -> void:
 	if target_unit == null:
 		return
 	
+	# Grant evasion capability
+	target_unit.set_evasion_chance(evasion_chance * stack_count)
+	
 	EventBus.log_debug("%s gained Evasion (%.0f%%)" % [target_unit.name, evasion_chance * stack_count * 100], "StatusEffect")
 
 func on_remove() -> void:
 	if target_unit == null:
 		return
+	
+	# Remove evasion
+	target_unit.set_evasion_chance(0.0)
 	
 	EventBus.log_debug("%s lost Evasion" % target_unit.name, "StatusEffect")
 
@@ -47,6 +53,7 @@ func on_remove() -> void:
 func on_stack_added() -> void:
 	# Update evasion chance when stacks increase
 	if target_unit != null:
+		target_unit.set_evasion_chance(evasion_chance * stack_count)
 		## new way to update evasion chance when stacks increase
 		stat_modifiers = {"evasion" : evasion_chance * stack_count}
 		if not stat_modifiers.is_empty():

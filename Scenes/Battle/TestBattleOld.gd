@@ -33,11 +33,8 @@ func _ready() -> void:
 		player_units,
 		enemy_units,
 		basic_cards,
-		basic_cards
+		basic_cards  # Both players use same basic cards
 	)
-	
-	# Listen for phase changes to show player prompts
-	EventBus.turn_phase_changed.connect(_on_phase_changed)
 	
 	print("Battle initialized!")
 	print("Player units: %d" % battle_manager.player.get_units().size())
@@ -56,26 +53,6 @@ func _ready() -> void:
 	if battle_manager.winner != null:
 		print("Winner: %s" % battle_manager.winner.get_display_name())
 
-## Called whenever the turn phase changes
-func _on_phase_changed(phase: Enums.TurnPhase, unit: Node) -> void:
-	if phase != Enums.TurnPhase.MAIN:
-		return
-	
-	# Check if this is the human player's unit
-	var player = battle_manager.get_node_or_null("Player")
-	if player == null:
-		return
-	
-	if unit in player.get_units():
-		print("\n╔══════════════════════════════╗")
-		print("║     YOUR TURN: %s" % unit.name.rpad(14) + "║")
-		print("╠══════════════════════════════╣")
-		print("║  ENTER  → End turn           ║")
-		print("║  SPACE  → Show battle state  ║")
-		print("║  H      → Show hand          ║")
-		print("║  T      → Show turn order    ║")
-		print("╚══════════════════════════════╝")
-
 # ============================================================================
 # UNIT CREATION
 # ============================================================================
@@ -83,11 +60,9 @@ func _on_phase_changed(phase: Enums.TurnPhase, unit: Node) -> void:
 func create_player_units() -> Array:
 	print("Creating player units...")
 	return [
-		#WarriorUnitData.create(),
-		#MageUnitData.create(),
-		#DemonKingUnitData.create()
-		ReaperVampireUnitData.create(),
-		FencerUnitData.create()
+		WarriorUnitData.create(),
+		MageUnitData.create(),
+		HealerUnitData.create()
 	]
 
 func create_enemy_units() -> Array:
@@ -148,32 +123,16 @@ func print_unit_info(unit: Node) -> void:
 # ============================================================================
 
 func _input(event: InputEvent) -> void:
-	if not (event is InputEventKey and event.pressed):
-		return
-	
-	match event.keycode:
-		KEY_ENTER, KEY_KP_ENTER:
-			# End player's turn
-			var turn_manager = battle_manager.get_node_or_null("TurnManager")
-			if turn_manager != null and turn_manager.is_waiting_for_player():
-				print("\n[Player] Turn ended by ENTER key")
-				turn_manager.request_end_turn()
-			else:
-				print("[Player] Not your turn right now")
-		
-		KEY_SPACE:
+	# Press SPACE to print current battle state
+	if event is InputEventKey and event.pressed:
+		if event.keycode == KEY_SPACE:
 			print_current_state()
-		
-		KEY_T:
+		elif event.keycode == KEY_T:
 			print_turn_order()
-		
-		KEY_H:
+		elif event.keycode == KEY_H:
 			print_hands()
-			
-		KEY_P:
-			print("\n[Player] will will play a card")
-			await play_Card1()
-		KEY_Q:
+		elif event.keycode == KEY_Q:
+			# Quit
 			get_tree().quit()
 
 func print_current_state() -> void:
@@ -207,14 +166,6 @@ func print_hands() -> void:
 	for card in battle_manager.enemy.get_hand():
 		print("  - %s (Cost: %d)" % [card.get_display_name(), card.get_mana_cost()])
 	print("=============\n")
-
-# ============================================================================
-# Playing Cards, Cards and Ultmate
-# ============================================================================
-
-func play_Card1():
-	
-	return;
 
 # ============================================================================
 # HELPER FUNCTIONS
