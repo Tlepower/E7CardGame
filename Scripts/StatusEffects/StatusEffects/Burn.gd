@@ -31,8 +31,7 @@ func on_tick() -> void:
 	# Damage is applied by base StatusEffect._apply_dot_damage()
 	# which is called automatically during tick
 
-func detonate(target: Node) -> void:
-	target_unit = target
+func on_detonate() -> void:
 	
 	if target_unit == null or not target_unit.is_alive():
 		return

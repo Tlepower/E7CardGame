@@ -102,7 +102,8 @@ enum ControlType {
 	TAUNT,          ## Must target taunter
 	PROVOKE,        ## Forces single target abilities on them
 	SILENCE,        ## Cannot use skills (passives still work)
-	RESTRICT        ## Cannot use ultimates specifically
+	RESTRICT,       ## Cannot use ultimates specifically
+	SUPPRESS        ## Cannot use trigger passives
 }
 
 # ============================================================================

@@ -212,11 +212,10 @@ func on_tick() -> void:
 ## Tigger detonate effect and remove it afterward
 func detonate(target: Node) -> void:
 	
-	on_detonate()
-	
 	if effect_type == Enums.StatusEffectType.DOT:
 		_apply_dot_damage()
-	
+		
+	on_detonate()
 	
 ## Override in subclasses for custom detonate behavior
 func on_detonate() -> void:
