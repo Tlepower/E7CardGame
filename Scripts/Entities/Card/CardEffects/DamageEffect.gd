@@ -30,6 +30,9 @@ class_name DamageEffect
 ## Can this damage crit?
 @export var can_crit: bool = true
 
+## Can the attack ignore damage 
+@export var is_damage_share_ignored: bool = true
+
 # ============================================================================
 # INITIALIZATION
 # ============================================================================
@@ -79,7 +82,7 @@ func execute_on_single_target(caster: Node, target: Node, game_state: Node) -> v
 		
 		# Apply damage
 		var is_true = (damage_type == Enums.DamageType.TRUE)
-		damage_calc.apply_damage(caster, target, damage_amount, game_state, is_true)
+		damage_calc.apply_damage(caster, target, damage_amount, is_damage_share_ignored, is_true)
 		
 		total_damage += damage_amount
 		

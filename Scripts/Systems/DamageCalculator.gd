@@ -79,7 +79,7 @@ func apply_damage(
 	source: Node,
 	target: Node,
 	amount: int,
-	game_state: Node,
+	is_damage_shared_ignored: bool = false,
 	is_true_damage: bool = false
 ) -> void:
 	
@@ -105,7 +105,7 @@ func apply_damage(
 	# Handle shields (unless true damage)
 	if not is_true_damage:
 		# Handle damage sharing
-		damage_to_apply = _apply_damage_share(target, damage_to_apply, game_state)
+		damage_to_apply = target.damage_shared(damage_to_apply, is_damage_shared_ignored)
 		# Handle shields 
 		damage_to_apply = _apply_damage_to_shields(target, damage_to_apply)
 	
@@ -195,10 +195,10 @@ func _apply_damage_share(target: Node, damage: int, game_state: Node) -> int:
 func calculate_and_apply_damage_to_multiple(
 	attacker: Node,
 	targets: Array,
-	game_state: Node,
 	atk_multiplier: float = 1.0,
 	def_ignore: float = 0.0,
 	damage_multiplier: float = 1.0,
+	is_damage_shared_ignored: bool = false,
 	is_true_damage: bool = false
 ) -> Dictionary:
 	
@@ -216,7 +216,7 @@ func calculate_and_apply_damage_to_multiple(
 		else:
 			damage = calculate_damage(attacker, target, atk_multiplier, def_ignore, damage_multiplier)
 		
-		apply_damage(attacker, target, damage, game_state, is_true_damage)
+		apply_damage(attacker, target, damage, is_damage_shared_ignored, is_true_damage)
 		results[target] = damage
 	
 	return results

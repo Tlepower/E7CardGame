@@ -53,6 +53,9 @@ class_name BasicAttackData
 ## Chance for additional effects to apply (0.0 - 1.0, 100% if 1.0)
 @export_range(0.0, 1.0, 0.01) var effect_chance: float = 1.0
 
+## Does this attack ignore damage share
+@export var is_damaged_share_ignored: bool = false
+
 # ============================================================================
 # EXECUTION
 # ============================================================================
@@ -112,7 +115,7 @@ func _attack_single_target(caster: Node, target: Node, game_state: Node) -> void
 		
 		# Apply the damage
 		var is_true = (damage_type == Enums.DamageType.TRUE)
-		damage_calc.apply_damage(caster, target, damage_amount, game_state, is_true)
+		damage_calc.apply_damage(caster, target, damage_amount, is_damaged_share_ignored, is_true)
 		
 		# Apply additional effects (if chance succeeds)
 		if not additional_effects.is_empty() and randf() <= effect_chance:

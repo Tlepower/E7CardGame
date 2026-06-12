@@ -232,6 +232,28 @@ func die() -> void:
 	if battle_manager != null and battle_manager.has_method("handle_unit_death"):
 		battle_manager.handle_unit_death(self)
 
+func damaged_shared(damage: int, is_ignored: bool) -> int:
+	if is_ignored:
+		return damage
+	
+	var remaining_damage = damage
+	var all_units = battle_manager.get_all_units()
+	
+	for unit in all_units:
+		if unit != null and unit.team == self.team and unit.name != self.name:
+			var damage_share_dmg = remaining_damage * unit.damage_share
+			remaining_damage = remaining_damage - damage_share_dmg
+			unit.take_damage(damage_share_dmg, false)
+			
+			if damage_share_dmg != 0:
+				EventBus.log_debug("%s takes %d shared damage from %s" % [ 
+					unit.name,
+					damage_share_dmg,
+					self.name
+				], "Damage")
+			
+	return remaining_damage
+
 # ============================================================================
 # STATUS EFFECT MANAGEMENT
 # ============================================================================
