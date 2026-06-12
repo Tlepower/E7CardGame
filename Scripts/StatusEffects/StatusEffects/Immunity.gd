@@ -1,6 +1,6 @@
 extends StatusEffect
 class_name Immunity
-## Immunity - Prevents all debuffs from being applied
+## Immunity - Prevents all debuffs from being applied, Prevents ar from being reduced, and Prevent CD from being  inceeased
 
 # ============================================================================
 # INITIALIZATION
@@ -8,7 +8,7 @@ class_name Immunity
 
 func _init(turns: int = 2) -> void:
 	effect_name = "Immunity"
-	description = "Cannot be debuffed"
+	description = "Cannot be debuffed, pulled, or CD increased"
 	effect_type = Enums.StatusEffectType.IMMUNITY
 	base_duration = turns
 	

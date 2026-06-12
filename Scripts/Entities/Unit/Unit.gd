@@ -270,7 +270,7 @@ func apply_status_effect(effect: Resource) -> void:
 	
 	# Check block
 	if has_block() and effect.is_positive():
-		EventBus.log_debug("Unit '%s' is immune to buff" % name, "StatusEffect")
+		EventBus.log_debug("Unit '%s' can't receive buff" % name, "StatusEffect")
 		return
 	
 	# Check effect resistance for debuffs
@@ -506,6 +506,9 @@ func can_perform_out_of_turn_action() -> bool:
 
 ## Modify Action Readiness (push/pull)
 func modify_ar(amount: float) -> void:
+	if amount < 0 and has_immunity():
+		EventBus.log_debug("unit %s can't be pulled back" % [unit_data.unit_name])
+		return
 	var old_ar = action_readiness
 	action_readiness += amount
 	action_readiness = maxf(0.0, action_readiness)  # Can't go below 0
