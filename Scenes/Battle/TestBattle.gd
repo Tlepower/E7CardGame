@@ -8,6 +8,10 @@ extends Node
 
 var battle_manager: BattleManager = null
 
+var targeting: bool = false
+var targetunits: Array
+var abilily: Card
+
 # ============================================================================
 # INITIALIZATION
 # ============================================================================
@@ -35,6 +39,9 @@ func _ready() -> void:
 		basic_cards,
 		basic_cards
 	)
+	targeting = false
+	abilily = null
+	targetunits = []
 	
 	# Listen for phase changes to show player prompts
 	EventBus.turn_phase_changed.connect(_on_phase_changed)
@@ -74,6 +81,8 @@ func _on_phase_changed(phase: Enums.TurnPhase, unit: Node) -> void:
 		print("║  SPACE  → Show battle state  ║")
 		print("║  H      → Show hand          ║")
 		print("║  T      → Show turn order    ║")
+		print("║  #      → Play a card        ║")
+		print("║  L      → Show Unit stats    ║")
 		print("╚══════════════════════════════╝")
 
 # ============================================================================
@@ -170,9 +179,19 @@ func _input(event: InputEvent) -> void:
 		KEY_H:
 			print_hands()
 			
-		KEY_P:
-			print("\n[Player] will will play a card")
-			await play_Card1()
+		KEY_0, KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7, KEY_8, KEY_9:
+			print("\n[Player] will play a card")
+			await get_target(event)
+		
+		KEY_W, KEY_E, KEY_R:
+			
+			if targeting:
+				var targets = event_to_int(event)
+				await play_Card(targets)
+		
+		KEY_L:
+			pass
+			
 		KEY_Q:
 			get_tree().quit()
 
@@ -201,24 +220,79 @@ func print_hands() -> void:
 	print("\n=== HANDS ===")
 	print("Player Hand:")
 	for card in battle_manager.player.get_hand():
-		print("  - %s (Cost: %d)" % [card.get_display_name(), card.get_mana_cost()])
+		print(" - %s (Cost: %d)\n" % [card.get_display_name(), card.get_mana_cost()])
+		print(" Card Effect: %s \n" % [card.card_data.description])
 	
 	print("\nEnemy Hand:")
 	for card in battle_manager.enemy.get_hand():
-		print("  - %s (Cost: %d)" % [card.get_display_name(), card.get_mana_cost()])
+		print("  - %s (Cost: %d)\n" % [card.get_display_name(), card.get_mana_cost()])
+		
 	print("=============\n")
 
 # ============================================================================
 # Playing Cards, Cards and Ultmate
 # ============================================================================
 
-func play_Card1():
+func play_Card(targets) -> void:
+	if targets == null:
+		return
+	await battle_manager.play_card(abilily,battle_manager.player,targets)
+	targeting = false
+	targetunits = []
+	abilily = null
+	print("Finshed playing %s " % [abilily.get_display_name()])
 	
-	return;
 
+
+func get_target(event: InputEvent) -> void:
+	var key: int = event_to_int(event)
+	
+	## get the targetingSystem
+	var targetingSystem = battle_manager.get_targeting_system()
+	if targetingSystem == null:
+		print("TargetingSystem doesn't exist")
+		return
+	
+	# get card from the key
+	var cards = battle_manager.player.get_hand()
+	if cards == null:
+		return
+	var card = cards[key]
+	
+	var TargetUnits: Array = targetingSystem.get_valid_targets_for_ability(card.card_data.target_type,Enums.Team.PLAYER,battle_manager.get_all_units())
+	
+	if card.card_data.target_type in [Enums.TargetType.SINGLE_ENEMY, Enums.TargetType.SINGLE_ALLY]:
+		print("\n Who do you want to target")
+		for target in TargetUnits:
+			print("%s " % [target.name])
+		targeting = true
+		targetunits = TargetUnits
+		abilily = card
+	elif card.card_data.target_type in [Enums.TargetType.ALL_ENEMIES, Enums.TargetType.ALL_ALLIES, Enums.TargetType.SELF, Enums.TargetType.OTHER_ALLIES]:
+		abilily = card
+		play_Card(TargetUnits)
+		
 # ============================================================================
 # HELPER FUNCTIONS
 # ============================================================================
+func event_to_int(event: InputEvent):
+	if event is InputEventKey:
+		match event.keycode:
+			KEY_0: return 0
+			KEY_1: return 1
+			KEY_2: return 2
+			KEY_3: return 3
+			KEY_4: return 4
+			KEY_5: return 5
+			KEY_6: return 6
+			KEY_7: return 7
+			KEY_8: return 8
+			KEY_9: return 9
+			KEY_W: return targetunits[0]
+			KEY_E: return targetunits[1]
+			KEY_R: return targetunits[2]
+			
+	return -1  # unrecognized
 
 func _on_battle_ended(winner: Node) -> void:
 	print("\n!!! BATTLE ENDED !!!")

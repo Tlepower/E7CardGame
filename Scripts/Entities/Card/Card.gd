@@ -75,11 +75,8 @@ func can_play(game_state: Node) -> bool:
 	if not _can_afford_mana(game_state):
 		return false
 	
-	if true:
-		return false
-	
 	# Check if we have valid targets
-	if not _has_valid_targets(game_state):
+	if not _has_valid_targets(game_state) and card_data.target_type != Enums.TargetType.SELF:
 		return false
 	
 	# Check if it's the right time to play (quick play vs main phase)

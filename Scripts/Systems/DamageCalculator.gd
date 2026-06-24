@@ -105,7 +105,7 @@ func apply_damage(
 	# Handle shields (unless true damage)
 	if not is_true_damage:
 		# Handle damage sharing
-		damage_to_apply = target.damage_shared(damage_to_apply, is_damage_shared_ignored)
+		damage_to_apply = target.damaged_shared(damage_to_apply, is_damage_shared_ignored)
 		# Handle shields 
 		damage_to_apply = _apply_damage_to_shields(target, damage_to_apply)
 	
