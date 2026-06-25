@@ -78,6 +78,16 @@ func can_play(game_state: Node) -> bool:
 	# Check if we have valid targets
 	if not _has_valid_targets(game_state) and card_data.target_type != Enums.TargetType.SELF:
 		return false
+		
+	var turn_manager = game_state.get_node_or_null("TurnManager")
+	if turn_manager == null:
+		return true
+	var current_unit = turn_manager.current_unit
+	
+	# Check if the current unit is using other's cards
+	if card_data.is_skill_card():
+		if current_unit.unit_data.unit_name != card_data.owner_unit_name:
+			return false
 	
 	# Check if it's the right time to play (quick play vs main phase)
 	if not _can_play_now(game_state):
@@ -122,6 +132,7 @@ func _can_play_now(game_state: Node) -> bool:
 	# Check if current unit belongs to this card's owner
 	if current_unit == null:
 		return false
+		
 	
 	return current_unit.team == _get_owner_team()
 

@@ -10,7 +10,7 @@ var battle_manager: BattleManager = null
 
 var targeting: bool = false
 var targetunits: Array
-var abilily: Card
+var abilily
 
 # ============================================================================
 # INITIALIZATION
@@ -184,13 +184,26 @@ func _input(event: InputEvent) -> void:
 			await get_target(event)
 		
 		KEY_W, KEY_E, KEY_R:
-			
 			if targeting:
-				var targets = event_to_int(event)
-				await play_Card(targets)
+				if abilily is Card:
+					var targets = event_to_int(event)
+					await play_Card(targets)
+				elif abilily == "Ultimate":
+					var targets = event_to_int(event)
+					await play_Ultimate(targets)
+				elif abilily == "BasicAttack":
+					var targets = event_to_int(event)
+					await play_BasicAttack(targets)
+				else:
+					pass
 		
-		KEY_L:
-			pass
+		KEY_U:
+			print("Player is using Unit's Ultimate")
+			await get_target(event)
+		
+		KEY_B:
+			print("Player is using Unit's Basic Attack")
+			await get_target(event)
 			
 		KEY_Q:
 			get_tree().quit()
@@ -220,12 +233,12 @@ func print_hands() -> void:
 	print("\n=== HANDS ===")
 	print("Player Hand:")
 	for card in battle_manager.player.get_hand():
-		print(" - %s (Cost: %d)\n" % [card.get_display_name(), card.get_mana_cost()])
+		print(" - %s (Cost: %d%s) %s" % [card.get_display_name(), card.get_mana_cost(), ", Quick Play" if card.is_quick_play() else "", card.get_owner_unit_name() if card.is_skill_card() else ""])
 		print(" Card Effect: %s \n" % [card.card_data.description])
 	
 	print("\nEnemy Hand:")
 	for card in battle_manager.enemy.get_hand():
-		print("  - %s (Cost: %d)\n" % [card.get_display_name(), card.get_mana_cost()])
+		print("  - %s (Cost: %d)" % [card.get_display_name(), card.get_mana_cost()])
 		
 	print("=============\n")
 
@@ -237,15 +250,31 @@ func play_Card(targets) -> void:
 	if targets == null:
 		return
 	await battle_manager.play_card(abilily,battle_manager.player,targets)
+	print("Finshed playing %s " % [abilily.get_display_name()])
 	targeting = false
 	targetunits = []
 	abilily = null
-	print("Finshed playing %s " % [abilily.get_display_name()])
-	
 
+func play_Ultimate(targets) -> void:
+	if targets == null:
+		return
+	await battle_manager.use_ultimate(_get_current_unit(),targets)
+	print("Finshed playing %s " % [_get_current_unit().ultimate_data.ultimate_name])
+	targeting = false
+	targetunits = []
+	abilily = null
+
+func play_BasicAttack(targets) -> void:
+	if targets == null:
+		return
+	await battle_manager.use_basic_attack(_get_current_unit(),targets)
+	print("Finshed playing %s " % [_get_current_unit().basic_attack_data.attack_name])
+	targeting = false
+	targetunits = []
+	abilily = null
 
 func get_target(event: InputEvent) -> void:
-	var key: int = event_to_int(event)
+	var key = event_to_int(event)
 	
 	## get the targetingSystem
 	var targetingSystem = battle_manager.get_targeting_system()
@@ -253,23 +282,37 @@ func get_target(event: InputEvent) -> void:
 		print("TargetingSystem doesn't exist")
 		return
 	
-	# get card from the key
-	var cards = battle_manager.player.get_hand()
-	if cards == null:
+	var TargetType: Enums.TargetType
+	
+	if typeof(key) == TYPE_STRING and key == "Ultimate":
+		var current_unit = _get_current_unit()
+		TargetType = current_unit.ultimate_data.target_type
+		abilily = key
+	elif typeof(key) == TYPE_STRING and key == "BasicAttack":
+		var current_unit = _get_current_unit()
+		TargetType = current_unit.basic_attack_data.target_type
+		abilily = key
+	elif  typeof(key) == TYPE_INT and key in [0,1,2,3,4,5,6,7,8,9]:
+		var cards = battle_manager.player.get_hand()
+		if cards == null:
+			return
+		var card = cards[key]
+		TargetType = card.card_data.target_type
+		abilily = card
+	else:
 		return
-	var card = cards[key]
 	
-	var TargetUnits: Array = targetingSystem.get_valid_targets_for_ability(card.card_data.target_type,Enums.Team.PLAYER,battle_manager.get_all_units())
+	# get card from the key
 	
-	if card.card_data.target_type in [Enums.TargetType.SINGLE_ENEMY, Enums.TargetType.SINGLE_ALLY]:
-		print("\n Who do you want to target")
+	var TargetUnits: Array = targetingSystem.get_valid_targets_for_ability(TargetType,Enums.Team.PLAYER,battle_manager.get_all_units())
+	
+	if TargetType in [Enums.TargetType.SINGLE_ENEMY, Enums.TargetType.SINGLE_ALLY]:
+		print("\nWho do you want to target")
 		for target in TargetUnits:
 			print("%s " % [target.name])
 		targeting = true
 		targetunits = TargetUnits
-		abilily = card
-	elif card.card_data.target_type in [Enums.TargetType.ALL_ENEMIES, Enums.TargetType.ALL_ALLIES, Enums.TargetType.SELF, Enums.TargetType.OTHER_ALLIES]:
-		abilily = card
+	elif TargetType in [Enums.TargetType.ALL_ENEMIES, Enums.TargetType.ALL_ALLIES, Enums.TargetType.SELF, Enums.TargetType.OTHER_ALLIES]:
 		play_Card(TargetUnits)
 		
 # ============================================================================
@@ -291,8 +334,14 @@ func event_to_int(event: InputEvent):
 			KEY_W: return targetunits[0]
 			KEY_E: return targetunits[1]
 			KEY_R: return targetunits[2]
+			KEY_U: return "Ultimate"
+			KEY_B: return "BasicAttack"
 			
 	return -1  # unrecognized
+	
+func _get_current_unit() -> Unit:
+	var turnmanager = battle_manager.get_turn_manager()
+	return turnmanager.current_unit
 
 func _on_battle_ended(winner: Node) -> void:
 	print("\n!!! BATTLE ENDED !!!")

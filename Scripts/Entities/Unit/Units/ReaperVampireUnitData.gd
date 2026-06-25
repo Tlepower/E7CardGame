@@ -74,6 +74,7 @@ static func create_skill1() -> CardData:
 	var buff = BuffEffect.new()
 	buff.status_effect_template = lifesteal_buff
 	buff.duration = 3
+	buff.target_type = Enums.TargetType.SELF
 	
 	skill.effects.append(drain)
 	skill.effects.append(buff)

@@ -52,12 +52,12 @@ func execute(caster: Node, target, game_state: Node) -> void:
 	
 	# Handle target conversion
 	var targets: Array = []
-	if target is Array:
+	if target_type == Enums.TargetType.SELF:
+		targets = [caster]
+	elif target is Array:
 		targets = target
 	elif target != null:
 		targets = [target]
-	elif target_type == Enums.TargetType.SELF:
-		targets = [caster]
 	else:
 		push_error("CardEffect '%s': no valid target" % effect_name)
 		return
