@@ -68,6 +68,7 @@ enum StatusEffectType {
 	DOT,        ## Damage over time (bleed, burn, poison)
 	SHIELD,     ## Barrier/shield effect
 	IMMUNITY,   ## Prevents debuffs
+	INVINCIBILITY, ## Prevents damage
 	BLOCK,      ## Prevents buffs
 	ANTIHEAL,   ## Prevents Healing
 	UNIQUE      ## Special effects that don't fit categories
@@ -302,8 +303,8 @@ static func get_opposite_team(team: Team) -> Team:
 
 ## Check if a status effect type is positive
 static func is_positive_effect(effect_type: StatusEffectType) -> bool:
-	return effect_type in [StatusEffectType.BUFF, StatusEffectType.SHIELD, StatusEffectType.IMMUNITY]
+	return effect_type in [StatusEffectType.BUFF, StatusEffectType.SHIELD, StatusEffectType.IMMUNITY, StatusEffectType.INVINCIBILITY,]
 
 ## Check if a status effect type is negative
 static func is_negative_effect(effect_type: StatusEffectType) -> bool:
-	return effect_type in [StatusEffectType.DEBUFF, StatusEffectType.CONTROL, StatusEffectType.DOT]
+	return effect_type in [StatusEffectType.DEBUFF, StatusEffectType.CONTROL, StatusEffectType.DOT, StatusEffectType.BLOCK]

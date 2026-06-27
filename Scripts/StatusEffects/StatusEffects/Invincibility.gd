@@ -9,11 +9,8 @@ class_name Invincibility
 func _init(turns: int = 1) -> void:
 	effect_name = "Invincibility"
 	description = "Cannot take damage"
-	effect_type = Enums.StatusEffectType.BUFF
+	effect_type = Enums.StatusEffectType.INVINCIBILITY
 	base_duration = turns
-	
-	# Set damage taken to 0
-	stat_modifiers = {"damage_taken_multiplier": 0.0}
 	
 	can_be_dispelled = true
 	ticks_on_turn_start = true

@@ -12,8 +12,8 @@ static func create_all() -> Array[CardData]:
 		create_damage(),
 		create_draw(),
 		create_ar_push(),
-		create_dispel(),
-		create_cleanse(),
+		create_add_mana(),
+		create_AOE_attack(),
 		create_shield()
 	]
 
@@ -165,4 +165,36 @@ static func create_shield() -> CardData:
 	shield.duration = 2
 	
 	card.effects.append(shield)
+	return card
+
+static func create_AOE_attack() -> CardData:
+	var card = CardData.new()
+	card.card_name = "Sweep Strike"
+	card.description = "Deal 150% of Atk as Damage to all foes"
+	card.card_type = Enums.CardType.BASIC
+	card.mana_cost = 2
+	card.is_quick_play = false
+	card.target_type = Enums.TargetType.ALL_ENEMIES
+	
+	var damage = DamageEffect.new()
+	damage.is_atk_based = true
+	damage.atk_multiplier = 1.5 # 150% Atk
+	damage.damage_type = Enums.DamageType.PHYSICAL 
+	
+	card.effects.append(damage)
+	return card
+
+static func create_add_mana() -> CardData:
+	var card = CardData.new()
+	card.card_name = "Fuel Gain"
+	card.description = "Gain one mana for free"
+	card.card_type = Enums.CardType.BASIC
+	card.mana_cost = 0
+	card.is_quick_play = true # Quick play
+	card.target_type = Enums.TargetType.SELF
+	
+	var managain = AddManaEffect.new()
+	managain.mana_amount = 1
+	
+	card.effects.append(managain)
 	return card

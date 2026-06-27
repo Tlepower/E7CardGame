@@ -83,6 +83,8 @@ func _on_phase_changed(phase: Enums.TurnPhase, unit: Node) -> void:
 		print("║  T      → Show turn order    ║")
 		print("║  #      → Play a card        ║")
 		print("║  L      → Show Unit stats    ║")
+		print("║  U      → Show Unit Ult      ║")
+		print("║  B      → Show Unit basic    ║")
 		print("╚══════════════════════════════╝")
 
 # ============================================================================
@@ -92,11 +94,11 @@ func _on_phase_changed(phase: Enums.TurnPhase, unit: Node) -> void:
 func create_player_units() -> Array:
 	print("Creating player units...")
 	return [
-		WarriorUnitData.create(),
+		#WarriorUnitData.create(),
 		#MageUnitData.create(),
 		#DemonKingUnitData.create()
 		ReaperVampireUnitData.create(),
-		FencerUnitData.create()
+		#FencerUnitData.create()
 	]
 
 func create_enemy_units() -> Array:
@@ -151,6 +153,11 @@ func print_unit_info(unit: Node) -> void:
 		stats.crit_rate * 100,
 		stats.crit_damage * 100
 	])
+	var status_effects = unit.status_effects
+	var effect_names: Array = []
+	for status_effect in status_effects:
+		effect_names.append(status_effect.effect_name)
+	print("    StatusEffect: %s" % [", ".join(effect_names) if not effect_names.is_empty() else "no buffs or debuffs"])
 
 # ============================================================================
 # INPUT HANDLING (for manual testing)
@@ -185,7 +192,7 @@ func _input(event: InputEvent) -> void:
 		
 		KEY_W, KEY_E, KEY_R:
 			if targeting:
-				if abilily is Card:
+				if abilily is Card and abilily in battle_manager.player.get_hand(): 
 					var targets = event_to_int(event)
 					await play_Card(targets)
 				elif abilily == "Ultimate":
@@ -204,6 +211,9 @@ func _input(event: InputEvent) -> void:
 		KEY_B:
 			print("Player is using Unit's Basic Attack")
 			await get_target(event)
+		
+		KEY_L:
+			_get_current_unit_info()
 			
 		KEY_Q:
 			get_tree().quit()
@@ -272,6 +282,7 @@ func play_BasicAttack(targets) -> void:
 	targeting = false
 	targetunits = []
 	abilily = null
+	
 
 func get_target(event: InputEvent) -> void:
 	var key = event_to_int(event)
@@ -296,6 +307,8 @@ func get_target(event: InputEvent) -> void:
 		var cards = battle_manager.player.get_hand()
 		if cards == null:
 			return
+		if key > cards.size() + 1:
+			return 
 		var card = cards[key]
 		TargetType = card.card_data.target_type
 		abilily = card
@@ -313,7 +326,13 @@ func get_target(event: InputEvent) -> void:
 		targeting = true
 		targetunits = TargetUnits
 	elif TargetType in [Enums.TargetType.ALL_ENEMIES, Enums.TargetType.ALL_ALLIES, Enums.TargetType.SELF, Enums.TargetType.OTHER_ALLIES]:
-		play_Card(TargetUnits)
+		if abilily is Card and abilily in battle_manager.player.get_hand(): 
+			await play_Card(TargetUnits)
+		elif abilily == "Ultimate":
+			await play_Ultimate(TargetUnits)
+		elif abilily == "BasicAttack":
+			await play_BasicAttack(TargetUnits)
+		#play_Card(TargetUnits)
 		
 # ============================================================================
 # HELPER FUNCTIONS
@@ -342,6 +361,10 @@ func event_to_int(event: InputEvent):
 func _get_current_unit() -> Unit:
 	var turnmanager = battle_manager.get_turn_manager()
 	return turnmanager.current_unit
+
+func _get_current_unit_info() -> void:
+	var current_unit = _get_current_unit()
+	print_unit_info(current_unit)
 
 func _on_battle_ended(winner: Node) -> void:
 	print("\n!!! BATTLE ENDED !!!")

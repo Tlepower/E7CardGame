@@ -166,7 +166,7 @@ signal targeting_started(card: Node, valid_targets: Array)
 signal target_selected(target: Node)
 
 ## Emitted when targeting is cancelled
-signal targeting_cancelled()
+signal targeting_cancelled(target: Node)
 
 # ============================================================================
 # PASSIVE TRIGGER SIGNALS

@@ -155,18 +155,23 @@ func take_damage(amount: int, is_true_damage: bool = false) -> void:
 	
 	# Apply damage
 	var damage_taken = amount
-	current_hp -= damage_taken
-	current_hp = maxi(0, current_hp)
-	
-	# Emit signal
-	EventBus.damage_dealt.emit(null, self, damage_taken, is_true_damage)
-	
-	# Trigger passives
-	_trigger_passive(Enums.TriggerCondition.ON_DAMAGE_TAKEN, {"damage": damage_taken})
+	if has_invincibility():
+		EventBus.log_debug("%s takes no damage because of Invincibility" % [get_display_name()],"Unit")
+	else:
+		_remove_hp(damage_taken)
+		# Emit signal
+		EventBus.damage_dealt.emit(null, self, damage_taken, is_true_damage)
+		# Trigger passives
+		_trigger_passive(Enums.TriggerCondition.ON_DAMAGE_TAKEN, {"damage": damage_taken})
 	
 	# Check for death
 	if current_hp <= 0:
 		die()
+		
+## Remove the amount from HP
+func _remove_hp(amount: int) -> void:
+	current_hp -= amount
+	current_hp = maxi(0, current_hp)
 
 ## Heal HP
 func heal(amount: int, source: Node = null) -> void:
@@ -415,6 +420,13 @@ func get_control_effects() -> Array[Dictionary]:
 func has_immunity() -> bool:
 	for effect in status_effects:
 		if effect.effect_type == Enums.StatusEffectType.IMMUNITY:
+			return true
+	return false
+
+## Check if unit has invincibility or invincibility like status effect
+func has_invincibility() -> bool:
+	for effect in status_effects:
+		if effect.effect_type == Enums.StatusEffectType.INVINCIBILITY:
 			return true
 	return false
 

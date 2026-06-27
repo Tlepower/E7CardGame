@@ -158,6 +158,27 @@ func draw_with_priority(active_unit: Node = null) -> Node:
 	# No skill card found in deck, normal draw
 	return draw_card()
 
+	## Draw a card for a player
+## If active_unit is provided, uses priority draw
+func draw_card_for_player(player: Node, active_unit: Node = null) -> Node:
+	if player == null:
+		push_error("DrawSystem: player is null")
+		return null
+	
+	if not player.has_method("draw_card"):
+		push_error("DrawSystem: player does not have draw_card method")
+		return null
+	
+	# Draw card
+	var card = player.draw_card(active_unit)
+	
+	if card != null:
+		EventBus.log_debug("%s drew: %s" % [player.get_display_name(), card.get_display_name()], "Draw")
+	else:
+		EventBus.log_debug("%s failed to draw card" % player.get_display_name(), "Draw")
+	
+	return card
+
 ## Find a skill card belonging to a specific unit in the deck
 func _find_unit_skill_in_deck(unit: Node) -> Node:
 	var unit_name = unit.unit_data.unit_name if unit.has_method("get") else unit.name
@@ -179,7 +200,7 @@ func has_unit_skill_in_hand(unit: Node) -> bool:
 	return false
 
 ## draw a selected card from the deck in put it in the hand
-func draw_selected_card(card: Card):
+func draw_selected_card(card: Card) -> Node:
 	# check if the card is in the deck
 	if !(card in deck):
 		return null
@@ -191,10 +212,12 @@ func draw_selected_card(card: Card):
 		
 	# draw the card
 	if card != null:
-		return
+		return null
 		
 	deck.erase(card)
 	add_to_hand(card)
+	
+	return card
 
 # ============================================================================
 # HAND MANAGEMENT

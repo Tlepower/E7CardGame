@@ -162,11 +162,12 @@ func play(target, game_state: Node) -> void:
 	# Emit signal
 	EventBus.card_played.emit(self, owner_player, target)
 	
+	# Move card to discard pile
+	_move_to_discard(game_state)
+	
 	# Execute all effects
 	await _execute_effects(target, game_state)
 	
-	# Move card to discard pile
-	_move_to_discard(game_state)
 
 ## Pay the mana cost
 func _pay_mana_cost(game_state: Node) -> bool:

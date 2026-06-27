@@ -62,7 +62,8 @@ func execute_on_single_target(caster: Node, target: Node, game_state: Node) -> v
 	
 	if is_execute:
 		EventBus.log_debug("%s executed %s for %d damage!" % [caster.name, target.name, damage], "ExecuteEffect")
-
+	else:
+		EventBus.log_debug("%s dealt %d damage to %s" % [caster.name, damage, target.name], "ExecuteEffect")
 # ============================================================================
 # DESCRIPTION
 # ============================================================================
