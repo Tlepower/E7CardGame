@@ -97,6 +97,8 @@ var healing_reduction: float = 0.0
 # (0.0 - 0.5, 0.1 = 10% of damage done to other allies goes to this unit)
 var damage_share: float = 0.0
 
+## Is this unit died
+var is_died: bool = false
 
 # ============================================================================
 # INITIALIZATION
@@ -119,6 +121,7 @@ func initialize_from_data(data: UnitData, team_side: Enums.Team) -> void:
 		current_stats = data.base_stats.duplicate_stats()
 		current_hp = current_stats.max_hp
 		current_max_hp = current_stats.max_hp
+		is_died = true
 	else:
 		push_error("Unit '%s': base_stats is null" % name)
 		return
@@ -203,7 +206,7 @@ func heal(amount: int, source: Node = null) -> void:
 
 ## Check if unit is alive
 func is_alive() -> bool:
-	return current_hp > 0
+	return is_died
 
 ## Get HP as percentage (0.0 - 1.0)
 func get_hp_percent() -> float:
@@ -230,6 +233,7 @@ func die() -> void:
 		return
 	
 	current_hp = 0
+	is_died = false
 	EventBus.unit_died.emit(self)
 	_trigger_passive(Enums.TriggerCondition.ON_ENEMY_DEATH, {"dead_unit": self})
 	

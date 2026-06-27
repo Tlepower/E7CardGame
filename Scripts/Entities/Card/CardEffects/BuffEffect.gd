@@ -22,7 +22,7 @@ class_name BuffEffect
 func _init() -> void:
 	effect_name = "Apply Buff"
 	description = "Apply a buff to target"
-	target_type = Enums.TargetType.SINGLE_ALLY
+	target_type = Enums.TargetType.SELF
 
 # ============================================================================
 # EXECUTION
