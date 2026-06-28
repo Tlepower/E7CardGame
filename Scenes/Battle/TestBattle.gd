@@ -96,18 +96,21 @@ func create_player_units() -> Array:
 	return [
 		#WarriorUnitData.create(),
 		#MageUnitData.create(),
-		#DemonKingUnitData.create()
-		ReaperVampireUnitData.create(),
+		DemonKingUnitData.create(),
+		#ReaperVampireUnitData.create(),
 		#FencerUnitData.create()
+		SniperUnitData.create()
 	]
 
 func create_enemy_units() -> Array:
 	print("Creating enemy units...")
 	# Enemy team has same composition
 	return [
+		ReaperVampireUnitData.create(),
 		WarriorUnitData.create(),
-		MageUnitData.create(),
-		HealerUnitData.create()
+		AssassinUnitData.create()
+		#MageUnitData.create(),
+		#HealerUnitData.create()
 	]
 
 # ============================================================================
@@ -137,13 +140,13 @@ func print_battle_info() -> void:
 	
 	print("\n===================\n")
 
-func print_unit_info(unit: Node) -> void:
+func print_unit_info(unit: Unit) -> void:
 	if unit == null:
 		return
 	
 	var stats = unit.get_stats()
 	print("  %s:" % unit.name)
-	print("    HP: %d/%d" % [unit.current_hp, stats.max_hp])
+	print("    HP: %d/%d" % [unit.current_hp, stats.max_hp,])
 	print("    ATK: %d | DEF: %d | SPD: %d" % [
 		stats.get_effective_atk(),
 		stats.get_effective_def(),
@@ -158,6 +161,7 @@ func print_unit_info(unit: Node) -> void:
 	for status_effect in status_effects:
 		effect_names.append(status_effect.effect_name)
 	print("    StatusEffect: %s" % [", ".join(effect_names) if not effect_names.is_empty() else "no buffs or debuffs"])
+	print("    Ultimate CD: %d" % unit.ultimate_cooldown)
 
 # ============================================================================
 # INPUT HANDLING (for manual testing)
@@ -179,6 +183,13 @@ func _input(event: InputEvent) -> void:
 		
 		KEY_SPACE:
 			print_current_state()
+			print("\n--- PLAYER TEAM ---")
+			for unit in battle_manager.player.get_units():
+				print_unit_info(unit)
+	
+			print("\n--- ENEMY TEAM ---")
+			for unit in battle_manager.enemy.get_units():
+				print_unit_info(unit)
 		
 		KEY_T:
 			print_turn_order()
@@ -242,8 +253,10 @@ func print_turn_order() -> void:
 func print_hands() -> void:
 	print("\n=== HANDS ===")
 	print("Player Hand:")
-	for card in battle_manager.player.get_hand():
-		print(" - %s (Cost: %d%s) %s" % [card.get_display_name(), card.get_mana_cost(), ", Quick Play" if card.is_quick_play() else "", card.get_owner_unit_name() if card.is_skill_card() else ""])
+	var hand = battle_manager.player.get_hand()
+	for x in range(hand.size()):
+		var card = hand[x]
+		print(" %d - %s (Cost: %d%s) %s" % [x,card.get_display_name(), card.get_mana_cost(), ", Quick Play" if card.is_quick_play() else "", card.get_owner_unit_name() if card.is_skill_card() else ""])
 		print(" Card Effect: %s \n" % [card.card_data.description])
 	
 	print("\nEnemy Hand:")

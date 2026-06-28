@@ -29,16 +29,19 @@ func execute_on_single_target(caster: Node, target: Node, game_state: Node) -> v
 	if not target.is_alive():
 		return
 	
+	var turn_order_system: TurnOrderSystem = game_state.get_node_or_null("TurnOrderSystem")
+	if turn_order_system == null:
+		return
+	
 	# Calculate AR change
 	var ar_change = ar_amount if is_push else -ar_amount
 	
 	# Apply AR modification
-	target.modify_ar(ar_change)
+	if is_push:
+		turn_order_system.push_ar(target,ar_change)
+	else:
+		turn_order_system.pull_ar(target,ar_amount)
 	
-	# Update turn order
-	var turn_order_system = game_state.get_node_or_null("TurnOrderSystem")
-	if turn_order_system != null:
-		turn_order_system.recalculate_queue()
 	
 	var action_word = "pushed" if is_push else "pulled"
 	EventBus.log_debug("%s %s %s's AR by %.1f%%" % [caster.name, action_word, target.name, ar_amount], "ARManipulationEffect")

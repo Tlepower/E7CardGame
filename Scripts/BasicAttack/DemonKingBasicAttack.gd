@@ -44,6 +44,8 @@ func execute(caster: Node, target: Node, game_state: Node) -> void:
 	
 	damage_calc.apply_damage(caster, target, damage, false, false)
 	
+	EventBus.log_debug("%s dealt %d damage to %s" % [caster.name, damage, target.name], "BasicAttack")
+	
 	# Apply DEF debuff with chance
 	if randf() <= effect_chance:
 		_apply_def_debuff(caster, target, game_state)

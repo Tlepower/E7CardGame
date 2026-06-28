@@ -53,7 +53,7 @@ static func create_heal() -> CardData:
 	card.card_type = Enums.CardType.BASIC
 	card.mana_cost = 1
 	card.is_quick_play = false
-	card.target_type = Enums.TargetType.SINGLE_ALLY
+	card.target_type = Enums.TargetType.SELF
 	
 	var heal = HealEffect.new()
 	heal.base_heal = 500

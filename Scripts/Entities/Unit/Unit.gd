@@ -14,7 +14,7 @@ var unit_data: UnitData = null
 var team: Enums.Team = Enums.Team.PLAYER
 
 ## Reference to the battle manager
-var battle_manager: Node = null
+var battle_manager: BattleManager = null
 
 # ============================================================================
 # STATS
@@ -163,7 +163,7 @@ func take_damage(amount: int, is_true_damage: bool = false) -> void:
 	else:
 		_remove_hp(damage_taken)
 		# Emit signal
-		EventBus.damage_dealt.emit(null, self, damage_taken, is_true_damage)
+		EventBus.damage_received.emit(null, self, damage_taken, is_true_damage)
 		# Trigger passives
 		_trigger_passive(Enums.TriggerCondition.ON_DAMAGE_TAKEN, {"damage": damage_taken})
 	
@@ -237,9 +237,7 @@ func die() -> void:
 	EventBus.unit_died.emit(self)
 	_trigger_passive(Enums.TriggerCondition.ON_ENEMY_DEATH, {"dead_unit": self})
 	
-	# Notify battle manager
-	if battle_manager != null and battle_manager.has_method("handle_unit_death"):
-		battle_manager.handle_unit_death(self)
+	
 
 func damaged_shared(damage: int, is_ignored: bool) -> int:
 	if is_ignored:
@@ -536,6 +534,7 @@ func modify_ar(amount: float) -> void:
 			EventBus.ar_pushed.emit(self, amount)
 		elif amount < 0:
 			EventBus.ar_pulled.emit(self, abs(amount))
+	
 
 ## Set AR directly
 func set_ar(value: float) -> void:
@@ -545,9 +544,45 @@ func set_ar(value: float) -> void:
 	if action_readiness != old_ar:
 		EventBus.ar_changed.emit(self, action_readiness, old_ar)
 
+
 ## Check if ready for turn (AR >= 100)
 func is_ready_for_turn() -> bool:
 	return action_readiness >= 100.0
+	
+# ============================================================================
+# Cooldown MANAGEMENT
+# ============================================================================
+func modify_CD(value: int):
+	if value < 0:
+		return
+	var old_ultCD = ultimate_cooldown
+	
+	# adjust ultimate's CD
+	ultimate_cooldown -= value
+	ultimate_cooldown = max(0,ultimate_cooldown)
+	
+	# Emit the signal
+	if ultimate_cooldown != old_ultCD:
+		EventBus.cd_changed.emit(self,ultimate_cooldown)
+		if value < 0:
+			EventBus.cd_reduced.emit(self,ultimate_cooldown)
+		else:
+			EventBus.cd_increased.emit(self,ultimate_cooldown)
+
+	
+func set_CD(value: int):
+	var old_ultCD = ultimate_cooldown
+	
+	# adjust the CD
+	ultimate_cooldown = value
+	ultimate_cooldown = max(0,ultimate_cooldown)
+	
+	# Emit the signal
+	if ultimate_cooldown != old_ultCD:
+		EventBus.cd_changed.emit(self,ultimate_cooldown)
+
+func is_fully_cooldown():
+	return ultimate_cooldown == 0
 
 # ============================================================================
 # STAT QUERIES

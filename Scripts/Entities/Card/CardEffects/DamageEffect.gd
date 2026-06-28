@@ -30,6 +30,9 @@ class_name DamageEffect
 ## Can this damage crit?
 @export var can_crit: bool = true
 
+## Does this attack force crit?
+@export var force_crit: bool = false
+
 ## Can the attack ignore damage 
 @export var is_damage_share_ignored: bool = true
 
@@ -74,11 +77,14 @@ func execute_on_single_target(caster: Node, target: Node, game_state: Node) -> v
 				atk_multiplier,
 				def_ignore,
 				damage_multiplier,
-				can_crit
+				can_crit,
+				force_crit
 			)
 		else:
 			# Fixed damage
 			damage_amount = int(base_damage * damage_multiplier)
+		
+		EventBus.log_debug("%s dealt %d damage to %s %s" % [caster.name, damage_amount, target.name, "with a crit" if can_crit else ""], "DamageEffect")
 		
 		# Apply damage
 		var is_true = (damage_type == Enums.DamageType.TRUE)
@@ -90,7 +96,7 @@ func execute_on_single_target(caster: Node, target: Node, game_state: Node) -> v
 		if hit_count > 1 and hit_index < hit_count - 1:
 			await caster.get_tree().create_timer(0.05).timeout
 	
-	EventBus.log_debug("%s dealt %d damage to %s" % [caster.name, total_damage, target.name], "DamageEffect")
+	#EventBus.log_debug("%s dealt %d damage to %s" % [caster.name, total_damage, target.name], "DamageEffect")
 
 # ============================================================================
 # DESCRIPTION

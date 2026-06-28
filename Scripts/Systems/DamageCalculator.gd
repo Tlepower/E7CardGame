@@ -18,6 +18,7 @@ func calculate_damage(
 	atk_multiplier: float = 1.0,
 	def_ignore: float = 0.0,
 	damage_multiplier: float = 1.0,
+	can_crit: bool = true,
 	force_crit: bool = false
 ) -> int:
 	
@@ -32,7 +33,7 @@ func calculate_damage(
 	var base_atk = attacker_stats.get_effective_atk()
 	
 	# Check for crit
-	var is_crit = force_crit or roll_crit(attacker_stats.crit_rate)
+	var is_crit = force_crit or roll_crit(attacker_stats.crit_rate) and can_crit
 	var crit_multiplier = 1.0
 	if is_crit:
 		crit_multiplier = attacker_stats.crit_damage

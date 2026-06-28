@@ -64,6 +64,9 @@ signal damage_calculated(source: Node, target: Node, amount: int, is_crit: bool)
 ## Emitted when damage is actually dealt (after applying)
 signal damage_dealt(source: Node, target: Node, final_amount: int, is_true_damage: bool)
 
+## Emitted when damage is applied on a unit
+signal damage_received(source: Node, target: Node, final_amount: int, is_true_damage: bool)
+
 ## Emitted when a unit is healed
 signal unit_healed(target: Node, amount: int, source: Node)
 
@@ -116,6 +119,18 @@ signal ar_pushed(unit: Node, amount: float)
 
 ## Emitted when AR is pulled (decreased)
 signal ar_pulled(unit: Node, amount: float)
+
+# ============================================================================
+# COOLDOWN (CD) SIGNALS 
+# ============================================================================
+## Emitted when a ultimate cooldown is changed
+signal cd_changed(unit: Node, amount: int)
+
+## Emitted when a ultimate cooldown is reduced
+signal cd_reduced(unit: Node, amount: int)
+
+## Emitted when a ultimate cooldown is increased
+signal cd_increased(unit: Node, amount: int) 
 
 # ============================================================================
 # QUICK PLAY SIGNALS
