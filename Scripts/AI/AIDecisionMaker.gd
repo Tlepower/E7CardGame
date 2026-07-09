@@ -61,6 +61,7 @@ func take_turn(ai_player: Node, current_unit: Node) -> void:
 
 ## Evaluate and choose best action
 func _evaluate_best_action(unit: Unit, hand: Array, mana: int, player: Node) -> Dictionary:
+	## All the actions that can be played this turn for the current
 	var playable_actions: Array[Dictionary] = []
 	
 	# Evaluate each card in hand
@@ -73,14 +74,24 @@ func _evaluate_best_action(unit: Unit, hand: Array, mana: int, player: Node) -> 
 			continue
 		
 		# Score each possible target
-		for target in targets:
-			var score = _score_card_play(card, unit, target)
+		if card.card_data.target_type in [Enums.TargetType.ALL_ALLIES, Enums.TargetType.ALL_ENEMIES]:
+			var score = _score_card_play(card, unit, targets)
 			playable_actions.append({
 				"type": "card",
 				"card": card,
-				"target": target,
+				"target": targets,
 				"score": score
 			})
+			pass
+		else:
+			for target in targets:
+				var score = _score_card_play(card, unit, target)
+				playable_actions.append({
+					"type": "card",
+					"card": card,
+					"target": target,
+					"score": score
+				})
 	
 	# Evaluate ultimate if available
 	if unit.can_use_ultimate():
