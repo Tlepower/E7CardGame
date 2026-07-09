@@ -171,10 +171,11 @@ enum StatType {
 # DAMAGE MULTIPLIER
 # ============================================================================
 
-enum DMG_MULTIPLIER{
-	ATK_based,
-	DEF_based,
-	MAX_HP_based,
+## What Stat is the attack or skill using
+enum MultiplierBase{
+	ATK_based, ## The Multiplier is based off caster's or target's ATK stat
+	DEF_based, ## The Multiplier is based off caster's or target's DEF stat
+	MAX_HP_based, ## The Multiplier is based off caster's or target's MAX HP stat
 }
 
 # ============================================================================

@@ -21,7 +21,7 @@ class_name BasicAttackData
 # ============================================================================
 
 ## Dmg Type
-@export var dmg_type: Enums.DMG_MULTIPLIER = Enums.DMG_MULTIPLIER.ATK_based
+@export var dmg_type: Enums.MultiplierBase = Enums.MultiplierBase.ATK_based
 
 ## ATK multiplier (1.0 = 100% of caster's ATK)
 @export var atk_multiplier: float = 1.0

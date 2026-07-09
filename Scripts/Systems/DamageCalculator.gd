@@ -18,7 +18,7 @@ func calculate_damage(
 	dmg_multiplier: float = 1.0,
 	def_ignore: float = 0.0,
 	damage_multiplier: float = 1.0,
-	dmg_type: Enums.DMG_MULTIPLIER = Enums.DMG_MULTIPLIER.ATK_based,
+	dmg_type: Enums.MultiplierBase = Enums.MultiplierBase.ATK_based,
 	can_crit: bool = true,
 	force_crit: bool = false
 ) -> int:

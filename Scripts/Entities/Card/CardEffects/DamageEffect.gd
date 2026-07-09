@@ -10,7 +10,7 @@ class_name DamageEffect
 @export var base_damage: int = 100
 
 ## Is this damage based on caster's Atk,Def,or MaxHp?
-@export var dmg_type: Enums.DMG_MULTIPLIER = Enums.DMG_MULTIPLIER.ATK_based
+@export var dmg_type: Enums.MultiplierBase = Enums.MultiplierBase.ATK_based
 
 ## Is this damage based on caster's ATK?
 @export var is_atk_based: bool = true
