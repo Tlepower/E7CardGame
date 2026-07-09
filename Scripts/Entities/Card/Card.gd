@@ -72,8 +72,8 @@ func can_play(game_state: Node) -> bool:
 		return false
 	
 	# Check mana cost
-	if not _can_afford_mana(game_state):
-		return false
+	#if not can_afford_mana(game_state):
+		#return false
 	
 	# Check if we have valid targets
 	if not _has_valid_targets(game_state) and card_data.target_type != Enums.TargetType.SELF:
@@ -96,7 +96,7 @@ func can_play(game_state: Node) -> bool:
 	return true
 
 ## Check if player can afford this card
-func _can_afford_mana(game_state: Node) -> bool:
+func can_afford_mana(game_state: Node) -> bool:
 	var mana_system = game_state.get_node_or_null("ManaSystem")
 	if mana_system == null:
 		push_warning("Card: ManaSystem not found")
@@ -155,9 +155,9 @@ func play(target, game_state: Node) -> void:
 	EventBus.log_debug("Playing card '%s' [ID:%d]" % [name, instance_id], "Card")
 	
 	# Pay mana cost
-	if not _pay_mana_cost(game_state):
-		EventBus.show_error("Cannot pay mana cost")
-		return
+	#if not pay_mana_cost(game_state):
+		#EventBus.show_error("Cannot pay mana cost")
+		#return
 	
 	# Emit signal
 	EventBus.card_played.emit(self, owner_player, target)
@@ -170,7 +170,7 @@ func play(target, game_state: Node) -> void:
 	
 
 ## Pay the mana cost
-func _pay_mana_cost(game_state: Node) -> bool:
+func pay_mana_cost(game_state: Node) -> bool:
 	var mana_system = game_state.get_node_or_null("ManaSystem")
 	if mana_system == null:
 		push_error("Card: ManaSystem not found")

@@ -99,6 +99,7 @@ static func create_ultimate() -> UltimateData:
 	var buff = BuffEffect.new()
 	buff.status_effect_template = immunity
 	buff.duration = 2
+	buff.target_type = Enums.TargetType.ALL_ALLIES
 	
 	ult.effects.append(buff)
 	ult.effects.append(immunity)

@@ -14,7 +14,9 @@ func _init(turns: int = 1) -> void:
 	base_duration = turns
 	
 	can_be_cleansed = true
+	ticks_on_turn_start = false
 	ticks_on_turn_end = true  # Control effects tick at END of turn
+	duration_decreases_on_start = false
 	duration_decreases_on_end = true
 	stack_type = Enums.StackType.NO_STACK
 

@@ -96,8 +96,9 @@ func create_player_units() -> Array:
 	return [
 		#WarriorUnitData.create(),
 		#MageUnitData.create(),
-		DemonKingUnitData.create(),
-		#ReaperVampireUnitData.create(),
+		#DemonKingUnitData.create(),
+		#AssassinUnitData.create(),
+		ReaperVampireUnitData.create(),
 		#FencerUnitData.create()
 		SniperUnitData.create()
 	]
@@ -108,9 +109,9 @@ func create_enemy_units() -> Array:
 	return [
 		ReaperVampireUnitData.create(),
 		WarriorUnitData.create(),
-		AssassinUnitData.create()
+		#AssassinUnitData.create()
 		#MageUnitData.create(),
-		#HealerUnitData.create()
+		HealerUnitData.create()
 	]
 
 # ============================================================================
@@ -145,6 +146,7 @@ func print_unit_info(unit: Unit) -> void:
 		return
 	
 	var stats = unit.get_stats()
+	var status_effects = unit.status_effects
 	print("  %s:" % unit.name)
 	print("    HP: %d/%d" % [unit.current_hp, stats.max_hp,])
 	print("    ATK: %d | DEF: %d | SPD: %d" % [
@@ -156,7 +158,6 @@ func print_unit_info(unit: Unit) -> void:
 		stats.crit_rate * 100,
 		stats.crit_damage * 100
 	])
-	var status_effects = unit.status_effects
 	var effect_names: Array = []
 	for status_effect in status_effects:
 		effect_names.append(status_effect.effect_name)
@@ -177,7 +178,7 @@ func _input(event: InputEvent) -> void:
 			var turn_manager = battle_manager.get_node_or_null("TurnManager")
 			if turn_manager != null and turn_manager.is_waiting_for_player():
 				print("\n[Player] Turn ended by ENTER key")
-				turn_manager.request_end_turn()
+				await turn_manager.request_end_turn()
 			else:
 				print("[Player] Not your turn right now")
 		
@@ -226,6 +227,9 @@ func _input(event: InputEvent) -> void:
 		KEY_L:
 			_get_current_unit_info()
 			
+		KEY_P:
+			pass_priority()
+		
 		KEY_Q:
 			get_tree().quit()
 
@@ -280,6 +284,8 @@ func play_Card(targets) -> void:
 
 func play_Ultimate(targets) -> void:
 	if targets == null:
+		return
+	if battle_manager.quick_play_system.is_window_active():
 		return
 	await battle_manager.use_ultimate(_get_current_unit(),targets)
 	print("Finshed playing %s " % [_get_current_unit().ultimate_data.ultimate_name])
@@ -345,11 +351,16 @@ func get_target(event: InputEvent) -> void:
 			await play_Ultimate(TargetUnits)
 		elif abilily == "BasicAttack":
 			await play_BasicAttack(TargetUnits)
-		#play_Card(TargetUnits)
 		
 # ============================================================================
 # HELPER FUNCTIONS
 # ============================================================================
+func pass_priority():
+	var quick_play_system = battle_manager.quick_play_system
+	var player = battle_manager.player
+	if quick_play_system.is_window_active():
+		quick_play_system.player_passes(player)
+
 func event_to_int(event: InputEvent):
 	if event is InputEventKey:
 		match event.keycode:

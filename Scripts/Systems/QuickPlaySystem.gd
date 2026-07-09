@@ -16,10 +16,10 @@ var is_quick_play_window_active: bool = false
 var effect_stack: Array[Dictionary] = []
 
 ## Which player currently has priority to respond
-var priority_player: Node = null
+var priority_player: Player = null
 
 ## Other player (for priority passing)
-var other_player: Node = null
+var other_player: Player = null
 
 ## How many times both players have passed in a row
 var consecutive_passes: int = 0
@@ -28,14 +28,16 @@ var consecutive_passes: int = 0
 const MAX_STACK_SIZE: int = 15
 
 ## Last card in the stack 
-var last_card: Node = null
+var last_card = null
+
+signal human_chose(dec:Array)
 
 # ============================================================================
 # REFERENCES
 # ============================================================================
 
 ## Reference to battle manager
-var battle_manager: Node = null
+var battle_manager: BattleManager = null
 
 # ============================================================================
 # INITIALIZATION
@@ -51,7 +53,7 @@ func initialize(manager: Node) -> void:
 
 ## Open quick play window
 ## triggering_action: description of what triggered this (e.g., "Fireball card played")
-func open_window(triggering_action: String, turn_player: Node, opponent: Node) -> void:
+func open_window(triggering_action: String, turn_player: Player, opponent: Player) -> void:
 	if is_quick_play_window_active:
 		push_warning("QuickPlaySystem: window already active")
 		return
@@ -98,10 +100,11 @@ func _offer_priority() -> void:
 	if priority_player.is_ai:
 		await _handle_ai_priority()
 	else:
+		player_passes(priority_player)
 		# Human player - UI will call player_plays_card or player_passes
 		# We wait for those calls
-		pass
-
+	
+	
 ## Handle AI priority (AI decides whether to play quick play card)
 func _handle_ai_priority() -> void:
 	# TODO: AI decision making for quick play
@@ -119,7 +122,7 @@ func player_plays_card(card: Node, player: Node, target, caster: Node) -> void:
 		push_error("QuickPlaySystem: player does not have priority")
 		return
 	
-	if not card.is_quick_play():
+	if not card.is_quick_play() and last_card != null:
 		push_error("QuickPlaySystem: card is not Quick Play")
 		return
 	
@@ -146,7 +149,7 @@ func player_plays_card(card: Node, player: Node, target, caster: Node) -> void:
 	consecutive_passes = 0
 	
 	# update the last card on the stack
-	last_card = effect_stack.back()
+	last_card = effect_stack.back().card
 	
 	# Pass priority to other player
 	_switch_priority()
@@ -202,6 +205,12 @@ func _resolve_stack() -> void:
 		
 		# Small delay between resolutions for visual clarity
 		await get_tree().create_timer(0.3).timeout
+	
+	# reset variables 
+	last_card = null
+	consecutive_passes = 0
+	priority_player = null
+	other_player = null
 	
 	EventBus.log_debug("Stack resolution complete", "QuickPlay")
 

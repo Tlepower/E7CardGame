@@ -19,7 +19,7 @@ var difficulty: Difficulty = Difficulty.MEDIUM
 # REFERENCES
 # ============================================================================
 
-var battle_manager: Node = null
+var battle_manager: BattleManager = null
 
 # ============================================================================
 # INITIALIZATION
@@ -112,6 +112,14 @@ func _evaluate_best_action(unit: Node, hand: Array, mana: int, player: Node) -> 
 func _can_play_card(card: Node, mana: int) -> bool:
 	if card == null:
 		return false
+		
+	var turn_manager = battle_manager.get_node_or_null("TurnManager")
+	if turn_manager == null:
+		return true
+	var current_unit = turn_manager.current_unit
+	if card.card_data.is_skill_card():
+		if current_unit.unit_data.unit_name != card.card_data.owner_unit_name:
+			return false
 	
 	var cost = card.get_mana_cost()
 	return cost <= mana
@@ -218,13 +226,14 @@ func _play_card(card: Node, player: Node, unit: Node, target) -> void:
 		return
 	
 	# Spend mana
-	mana_system.spend_mana(player, cost)
+	# mana_system.spend_mana(player, cost)
 	
 	# Play card
-	await card.play(target, battle_manager)
+	# await card.play(target, battle_manager)
+	await battle_manager.play_card(card,player,target)
 	
 	# Discard
-	player.discard_card(card)
+	# player.discard_card(card)
 	
 	# Mark action taken
 	var turn_manager = battle_manager.get_turn_manager()

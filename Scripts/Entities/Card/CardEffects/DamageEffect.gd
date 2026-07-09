@@ -9,11 +9,26 @@ class_name DamageEffect
 ## Base damage amount (if not ATK-based)
 @export var base_damage: int = 100
 
+## Is this damage based on caster's Atk,Def,or MaxHp?
+@export var dmg_type: Enums.DMG_MULTIPLIER = Enums.DMG_MULTIPLIER.ATK_based
+
 ## Is this damage based on caster's ATK?
 @export var is_atk_based: bool = true
 
+## Is this damage based on caster's Def?
+@export var is_def_based: bool = false
+
+## Is this damge based on caster's MAX HP?
+@export var is_max_hp_based: bool = false
+
 ## ATK multiplier if ATK-based (e.g., 1.5 = 150% of ATK)
 @export var atk_multiplier: float = 1.0
+
+## DEF multiplier if DEF-based (e.g., 1.5 = 150% of DEF)
+@export var def_multiplier: float = 1.0
+
+## HP multiplier if MAX-HP-based (e.g., 0.3 = 30% of Max Hp)
+@export var hp_multiplier: float = 0.3
 
 ## Damage type (physical, magical, true)
 @export var damage_type: Enums.DamageType = Enums.DamageType.PHYSICAL
@@ -69,7 +84,18 @@ func execute_on_single_target(caster: Node, target: Node, game_state: Node) -> v
 		
 		var damage_amount = 0
 		
-		if is_atk_based:
+		if dmg_type == Enums.DMG_MULTIPLIER.DEF_based:
+			damage_amount = damage_calc.calculate_damage(
+				caster,
+				target,
+				atk_multiplier,
+				def_ignore,
+				damage_multiplier,
+				dmg_type,
+				can_crit,
+				force_crit
+				)
+		elif  is_atk_based:
 			# ATK-based damage calculation
 			damage_amount = damage_calc.calculate_damage(
 				caster,
@@ -77,6 +103,7 @@ func execute_on_single_target(caster: Node, target: Node, game_state: Node) -> v
 				atk_multiplier,
 				def_ignore,
 				damage_multiplier,
+				dmg_type,
 				can_crit,
 				force_crit
 			)

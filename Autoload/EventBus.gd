@@ -226,6 +226,7 @@ signal show_notification(message: String, type: String)
 ## Emitted for debug logging
 signal debug_log(message: String, category: String)
 
+signal chose(event: Array)
 
 # ============================================================================
 # HELPER FUNCTIONS

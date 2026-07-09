@@ -39,7 +39,8 @@ func execute(caster: Node, target: Node, game_state: Node) -> void:
 		target,
 		atk_multiplier,
 		def_ignore,
-		damage_multiplier
+		damage_multiplier,
+		Enums.DMG_MULTIPLIER.ATK_based
 	)
 	
 	damage_calc.apply_damage(caster, target, damage, false, false)

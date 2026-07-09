@@ -85,7 +85,8 @@ static func create_skill2() -> CardData:
 	# Light damage
 	var damage = DamageEffect.new()
 	damage.is_atk_based = true
-	damage.atk_multiplier = 1.0  # 100% ATK
+	damage.dmg_type = Enums.DMG_MULTIPLIER.DEF_based
+	damage.atk_multiplier = 3.6  # 360% DEF
 	damage.damage_type = Enums.DamageType.PHYSICAL
 	damage.can_crit = true
 	

@@ -20,6 +20,9 @@ class_name BasicAttackData
 # DAMAGE PROPERTIES
 # ============================================================================
 
+## Dmg Type
+@export var dmg_type: Enums.DMG_MULTIPLIER = Enums.DMG_MULTIPLIER.ATK_based
+
 ## ATK multiplier (1.0 = 100% of caster's ATK)
 @export var atk_multiplier: float = 1.0
 
@@ -110,6 +113,7 @@ func _attack_single_target(caster: Node, target: Node, game_state: Node) -> void
 			atk_multiplier,
 			def_ignore,
 			damage_multiplier,
+			
 			false  # Crit check will be done inside calculate_damage
 		)
 		

@@ -134,7 +134,7 @@ func _handle_ai_turn() -> void:
 	
 	# Let AI decide and execute action
 	await ai.take_turn(ai_player, current_unit)
-	##await get_tree().create_timer(1.0).timeout
+	await get_tree().create_timer(1.0).timeout
 	await end_turn()
 
 ## End the current turn
@@ -184,7 +184,7 @@ func _auto_basic_attack() -> void:
 	var enemy_team = Enums.get_opposite_team(current_unit.team)
 	var enemies = []
 	for unit in all_units:
-		if unit.team == enemy_team and unit.is_alive():
+		if unit.team == enemy_team and unit.is_alive() and not unit.has_status_effect("Stealth"):
 			enemies.append(unit)
 	
 	if enemies.is_empty():

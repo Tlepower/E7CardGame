@@ -15,9 +15,10 @@ class_name DamageCalculator
 func calculate_damage(
 	attacker: Node,
 	defender: Node,
-	atk_multiplier: float = 1.0,
+	dmg_multiplier: float = 1.0,
 	def_ignore: float = 0.0,
 	damage_multiplier: float = 1.0,
+	dmg_type: Enums.DMG_MULTIPLIER = Enums.DMG_MULTIPLIER.ATK_based,
 	can_crit: bool = true,
 	force_crit: bool = false
 ) -> int:
@@ -30,7 +31,9 @@ func calculate_damage(
 	var defender_stats = defender.get_stats()
 	
 	# Step 1: Calculate base damage dealt
-	var base_atk = attacker_stats.get_effective_atk()
+	var base_dmg = attacker_stats.get_effective_atk()
+	if dmg_type == Enums.DMG_MULTIPLIER.DEF_based:
+		base_dmg = attacker_stats.get_effective_def()
 	
 	# Check for crit
 	var is_crit = force_crit or roll_crit(attacker_stats.crit_rate) and can_crit
@@ -42,7 +45,7 @@ func calculate_damage(
 	var total_damage_mult = damage_multiplier * attacker_stats.damage_multiplier
 	
 	# Damage Dealt = Base Atk × Atk% × (1 + Crit Multiplier) × Dmg Multiplier
-	var damage_dealt = base_atk * atk_multiplier * (crit_multiplier) * total_damage_mult
+	var damage_dealt = base_dmg * dmg_multiplier * (crit_multiplier) * total_damage_mult
 	
 	# Step 2: Calculate damage received (defense formula)
 	var base_def = defender_stats.get_effective_def()
@@ -235,8 +238,8 @@ func preview_damage(
 	damage_multiplier: float = 1.0
 ) -> Dictionary:
 	
-	var damage_no_crit = calculate_damage(attacker, defender, atk_multiplier, def_ignore, damage_multiplier, false)
-	var damage_with_crit = calculate_damage(attacker, defender, atk_multiplier, def_ignore, damage_multiplier, true)
+	var damage_no_crit = calculate_damage(attacker, defender, atk_multiplier, def_ignore, damage_multiplier, Enums.DMG_MULTIPLIER.ATK_based,false)
+	var damage_with_crit = calculate_damage(attacker, defender, atk_multiplier, def_ignore, damage_multiplier, Enums.DMG_MULTIPLIER.ATK_based, true)
 	
 	var attacker_stats = attacker.get_stats()
 	var crit_rate = attacker_stats.crit_rate

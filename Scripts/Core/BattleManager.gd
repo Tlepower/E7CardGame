@@ -111,6 +111,12 @@ func _create_game_systems() -> void:
 	add_child(quick_play_system)
 	quick_play_system.initialize(self)
 	
+	# AI Decision Maker
+	var ai = AIDecisionMaker.new()
+	ai.name = "AIDecisionMaker"
+	add_child(ai)
+	ai.initialize(self, AIDecisionMaker.Difficulty.MEDIUM)
+	
 	EventBus.log_debug("All game systems created", "Battle")
 
 ## Initialize battle with player configurations
@@ -247,8 +253,14 @@ func play_card(card: Node, player_node: Player, target) -> void:
 		push_error("BattleManager: cannot play cards outside main phase")
 		return
 	
+	if card.can_afford_mana(self):
+		card.pay_mana_cost(self)
 	# Play the card
-	await card.play(target, self)
+	# await card.play(target, self)
+	if not quick_play_system.is_window_active():
+		quick_play_system.open_window("%s just played a card" % [player_node.get_display_name()],player_node,get_opponent(player_node))
+		
+	await quick_play_system.player_plays_card(card,player_node,target,current_unit)
 	
 	# Mark action taken
 	turn_manager.mark_action_taken()

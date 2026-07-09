@@ -23,7 +23,7 @@ static func create() -> UnitData:
 
 static func create_stats() -> UnitStats:
 	var stats = UnitStats.new()
-	stats.max_hp = 850
+	stats.max_hp = 860
 	stats.base_atk = 106
 	stats.base_def = 78   
 	stats.speed = 110 # Ok speed    
