@@ -34,9 +34,7 @@ static func create_stats() -> UnitStats:
 	return stats
 
 static func create_passive() -> Script:
-	# return load("res://Scripts/Passives/FullTestEvasion.gd")
-	var passive = Passive.new()
-	return null
+	return load("res://Scripts/Passives/SniperPassive.gd")
 
 static func create_basic_attack() -> BasicAttackData:
 	var basic = BasicAttackData.new()
@@ -114,6 +112,6 @@ static func create_ultimate() -> UltimateData:
 	buff_effect.duration = 1 # 1 turn
 	buff_effect.target_type = Enums.TargetType.SELF
 	
-	ult.effects.append(damage)
 	ult.effects.append(buff_effect)
+	ult.effects.append(damage)
 	return ult
