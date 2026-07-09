@@ -102,7 +102,7 @@ static func create_ultimate() -> UltimateData:
 	buff.target_type = Enums.TargetType.ALL_ALLIES
 	
 	ult.effects.append(buff)
-	ult.effects.append(immunity)
+	ult.effects.append(heal)
 	
 	return ult
 

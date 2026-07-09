@@ -44,7 +44,7 @@ class_name CardEffect
 ## caster: Unit using the card/ability
 ## target: Can be Unit, Array[Unit], or null depending on target_type
 ## game_state: Reference to BattleManager for accessing systems
-func execute(caster: Node, target, game_state: Node) -> void:
+func execute(caster: Node, target, game_state: BattleManager) -> void:
 	# Validation
 	if caster == null:
 		push_error("CardEffect '%s': caster is null" % effect_name)

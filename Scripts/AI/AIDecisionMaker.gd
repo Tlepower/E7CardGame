@@ -60,7 +60,7 @@ func take_turn(ai_player: Node, current_unit: Node) -> void:
 # ============================================================================
 
 ## Evaluate and choose best action
-func _evaluate_best_action(unit: Node, hand: Array, mana: int, player: Node) -> Dictionary:
+func _evaluate_best_action(unit: Unit, hand: Array, mana: int, player: Node) -> Dictionary:
 	var playable_actions: Array[Dictionary] = []
 	
 	# Evaluate each card in hand
@@ -85,13 +85,22 @@ func _evaluate_best_action(unit: Node, hand: Array, mana: int, player: Node) -> 
 	# Evaluate ultimate if available
 	if unit.can_use_ultimate():
 		var ult_targets = _get_valid_targets_for_ultimate(unit)
-		for target in ult_targets:
-			var score = _score_ultimate_use(unit, target)
+		# checks if the ult is an AOE ult so all target are added to playable_action
+		if unit.ultimate_data.target_type in [Enums.TargetType.ALL_ALLIES, Enums.TargetType.ALL_ENEMIES]:
+			var score = _score_ultimate_use(unit, ult_targets)
 			playable_actions.append({
 				"type": "ultimate",
-				"target": target,
+				"target": ult_targets,
 				"score": score
 			})
+		else:
+			for target in ult_targets:
+				var score = _score_ultimate_use(unit, target)
+				playable_actions.append({
+					"type": "ultimate",
+					"target": target,
+					"score": score
+				})
 	
 	# Choose best action based on difficulty
 	if playable_actions.is_empty():
@@ -192,6 +201,10 @@ func _score_ultimate_use(unit: Node, target) -> float:
 	# AOE ultimates are great if multiple enemies alive
 	if unit.ultimate_data.target_type == Enums.TargetType.ALL_ENEMIES:
 		var enemy_count = _count_alive_enemies()
+		score += enemy_count * 3.0
+	
+	if unit.ultimate_data.target_type == Enums.TargetType.ALL_ALLIES:
+		var enemy_count = _count_alive_allies()
 		score += enemy_count * 3.0
 	
 	# Single target ultimates prefer low HP targets

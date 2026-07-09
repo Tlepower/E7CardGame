@@ -30,7 +30,6 @@ const MAX_STACK_SIZE: int = 15
 ## Last card in the stack 
 var last_card = null
 
-signal human_chose(dec:Array)
 
 # ============================================================================
 # REFERENCES
