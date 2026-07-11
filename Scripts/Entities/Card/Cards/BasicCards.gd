@@ -102,14 +102,14 @@ static func create_draw() -> CardData:
 static func create_ar_push() -> CardData:
 	var card = CardData.new()
 	card.card_name = "Haste"
-	card.description = "Increase ally's Action Readiness by 30%"
+	card.description = "Increase ally's Action Readiness by 15%"
 	card.card_type = Enums.CardType.BASIC
 	card.mana_cost = 2
 	card.is_quick_play = false
 	card.target_type = Enums.TargetType.SINGLE_ALLY
 	
 	var ar_push = ARManipulationEffect.new()
-	ar_push.ar_amount = 30.0
+	ar_push.ar_amount = 15.0
 	ar_push.is_push = true
 	
 	card.effects.append(ar_push)
