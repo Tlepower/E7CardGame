@@ -26,7 +26,7 @@ static func create_stats() -> UnitStats:
 	stats.max_hp = 860
 	stats.base_atk = 106
 	stats.base_def = 78   
-	stats.speed = 110 # Ok speed    
+	stats.speed = 90 # Ok speed    
 	stats.crit_rate = 0.3  # 30%  
 	stats.crit_damage = 1.9  # 190% crit dmg base
 	stats.effectiveness = 0.1
