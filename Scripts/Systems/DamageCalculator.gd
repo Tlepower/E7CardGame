@@ -32,7 +32,7 @@ func calculate_damage(
 	
 	# Step 1: Calculate base damage dealt
 	var base_dmg = attacker_stats.get_effective_atk()
-	if dmg_type == Enums.DMG_MULTIPLIER.DEF_based:
+	if dmg_type == Enums.MultiplierBase.DEF_based:
 		base_dmg = attacker_stats.get_effective_def()
 	
 	# Check for crit

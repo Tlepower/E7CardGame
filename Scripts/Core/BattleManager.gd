@@ -258,7 +258,7 @@ func play_card(card: Node, player_node: Player, target) -> void:
 	# Play the card
 	# await card.play(target, self)
 	if not quick_play_system.is_window_active():
-		quick_play_system.open_window("%s just played a card" % [player_node.get_display_name()],player_node,get_opponent(player_node))
+		await quick_play_system.open_window("%s just played a card" % [player_node.get_display_name()],player_node,get_opponent(player_node))
 		
 	await quick_play_system.player_plays_card(card,player_node,target,current_unit)
 	

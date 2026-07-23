@@ -59,6 +59,9 @@ class_name BasicAttackData
 ## Does this attack ignore damage share
 @export var is_damaged_share_ignored: bool = false
 
+## can this attack crit
+@export var can_crit: bool = true
+
 # ============================================================================
 # EXECUTION
 # ============================================================================
@@ -113,7 +116,8 @@ func _attack_single_target(caster: Node, target: Node, game_state: Node) -> void
 			atk_multiplier,
 			def_ignore,
 			damage_multiplier,
-			
+			dmg_type,
+			can_crit,
 			false  # Crit check will be done inside calculate_damage
 		)
 		

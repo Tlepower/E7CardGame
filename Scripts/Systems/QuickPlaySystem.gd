@@ -99,10 +99,10 @@ func _offer_priority() -> void:
 	if priority_player.is_ai:
 		await _handle_ai_priority()
 	else:
-		player_passes(priority_player)
+		# player_passes(priority_player)
 		# Human player - UI will call player_plays_card or player_passes
 		# We wait for those calls
-	
+		pass
 	
 ## Handle AI priority (AI decides whether to play quick play card)
 func _handle_ai_priority() -> void:

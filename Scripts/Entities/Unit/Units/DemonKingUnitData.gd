@@ -53,7 +53,7 @@ static func create_skill1() -> CardData:
 	
 	# Light damage
 	var damage = DamageEffect.new()
-	damage.is_atk_based = true
+	damage.dmg_type = Enums.MultiplierBase.ATK_based
 	damage.atk_multiplier = 1.2  # 120% ATK
 	damage.damage_type = Enums.DamageType.MAGICAL
 	damage.can_crit = true
@@ -100,7 +100,7 @@ static func create_ultimate() -> UltimateData:
 	
 	# AOE damage
 	var damage = DamageEffect.new()
-	damage.is_atk_based = true
+	damage.dmg_type = Enums.MultiplierBase.ATK_based
 	damage.atk_multiplier = 2.2  # 220% ATK to all
 	damage.damage_type = Enums.DamageType.MAGICAL
 	damage.can_crit = true

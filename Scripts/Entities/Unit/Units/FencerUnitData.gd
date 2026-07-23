@@ -65,7 +65,7 @@ static func create_skill1() -> CardData:
 	
 	# Fast multi-hit damage
 	var damage = DamageEffect.new()
-	damage.is_atk_based = true
+	damage.dmg_type = Enums.MultiplierBase.ATK_based
 	damage.atk_multiplier = 0.7  # 70% ATK
 	damage.damage_type = Enums.DamageType.PHYSICAL
 	damage.def_ignore = 0.2  # 20% DEF ignore
@@ -117,7 +117,7 @@ static func create_ultimate() -> UltimateData:
 	
 	# Damage
 	var damage = DamageEffect.new()
-	damage.is_atk_based = true
+	damage.dmg_type = Enums.MultiplierBase.ATK_based
 	damage.atk_multiplier = 2.0  # 200% ATK
 	damage.damage_type = Enums.DamageType.PHYSICAL
 	damage.def_ignore = 0.25
