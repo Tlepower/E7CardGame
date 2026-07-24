@@ -34,6 +34,8 @@ func calculate_damage(
 	var base_dmg = attacker_stats.get_effective_atk()
 	if dmg_type == Enums.MultiplierBase.DEF_based:
 		base_dmg = attacker_stats.get_effective_def()
+	elif dmg_multiplier == Enums.MultiplierBase.MAX_HP_based:
+		base_dmg = attacker_stats.get_stat_value(Enums.StatType.MAX_HP)
 	
 	# Check for crit
 	var is_crit = force_crit or roll_crit(attacker_stats.crit_rate) and can_crit

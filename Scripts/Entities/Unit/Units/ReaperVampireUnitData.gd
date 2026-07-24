@@ -67,6 +67,7 @@ static func create_skill1() -> CardData:
 	
 	# Life drain damage + healing
 	var drain = LifeDrainEffect.new(1.6, 0.6)  # 160% ATK, heal for 60% of damage
+	drain.damage_type = Enums.DamageType.MAGICAL
 	
 	# Grant self lifesteal buff
 	var lifesteal_buff = Lifesteal.new(0.25, 3)  # 25% lifesteal for 3 turns

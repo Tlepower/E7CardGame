@@ -107,7 +107,7 @@ func create_enemy_units() -> Array:
 	print("Creating enemy units...")
 	# Enemy team has same composition
 	return [
-		ReaperVampireUnitData.create(),
+		#ReaperVampireUnitData.create(),
 		WarriorUnitData.create(),
 		#AssassinUnitData.create()
 		#MageUnitData.create(),

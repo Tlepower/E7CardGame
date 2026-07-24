@@ -1,4 +1,4 @@
-extends CardEffect
+extends DamageEffect
 class_name LifeDrainEffect
 ## LifeDrainEffect - Deal damage and heal caster for a percentage of damage dealt
 
@@ -7,16 +7,15 @@ class_name LifeDrainEffect
 # ============================================================================
 
 ## ATK multiplier for damage
-@export var atk_multiplier: float = 1.5
+#@export var atk_multiplier: float = 1.5
 
 ## Percentage of damage converted to healing (e.g., 0.5 = 50%)
 @export var drain_percent: float = 0.5
 
 ## Damage type
-@export var damage_type: Enums.DamageType = Enums.DamageType.MAGICAL
 
 ## Can crit?
-@export var can_crit: bool = true
+#@export var can_crit: bool = true
 
 # ============================================================================
 # INITIALIZATION
@@ -48,11 +47,14 @@ func execute_on_single_target(caster: Node, target: Node, game_state: Node) -> v
 		caster,
 		target,
 		atk_multiplier,
-		0.0,  # No def ignore
-		1.0,  # No damage multiplier
-		can_crit
+		def_ignore,
+		damage_multiplier,
+		dmg_type,
+		can_crit,
+		force_crit
 	)
 	
+	EventBus.log_debug("%s dealt %d damage to %s %s" % [caster.name, damage, target.name, "with a crit" if force_crit else ""], "DamageEffect")
 	# Apply damage
 	damage_calc.apply_damage(caster, target, damage, false)
 	

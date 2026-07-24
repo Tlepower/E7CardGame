@@ -110,7 +110,7 @@ func execute_on_single_target(caster: Node, target: Node, game_state: Node) -> v
 			# Fixed damage
 			damage_amount = int(base_damage * damage_multiplier)
 		
-		EventBus.log_debug("%s dealt %d damage to %s %s" % [caster.name, damage_amount, target.name, "with a crit" if can_crit else ""], "DamageEffect")
+		EventBus.log_debug("%s dealt %d damage to %s %s" % [caster.name, damage_amount, target.name, "with a crit" if force_crit else ""], "DamageEffect")
 		
 		# Apply damage
 		var is_true = (damage_type == Enums.DamageType.TRUE)
