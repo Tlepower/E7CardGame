@@ -109,7 +109,13 @@ func _handle_ai_priority() -> void:
 	# TODO: AI decision making for quick play
 	# For now, AI always passes
 	await get_tree().create_timer(0.5).timeout  # Simulate thinking
-	player_passes(priority_player)
+	if effect_stack.size() <= 0:
+		pass
+	else:
+		player_passes(priority_player)
+		
+func _handle_human_priority() -> void:
+	pass
 
 ## Player plays a quick play card
 func player_plays_card(card: Node, player: Node, target, caster: Node) -> void:
