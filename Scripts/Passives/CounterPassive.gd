@@ -7,7 +7,7 @@ class_name CounterPassive
 # ============================================================================
 
 ## Base counter chance
-const BASE_COUNTER_CHANCE: float = 0.3  # 30% base counter
+const BASE_COUNTER_CHANCE: float = 1.0  # 30% base counter
 
 # ============================================================================
 # INITIALIZATION
@@ -20,7 +20,7 @@ func _init() -> void:
 	is_mandatory = false
 	can_be_suppressed = false
 	
-	trigger_conditions = [Enums.TriggerCondition.ON_BATTLE_START]
+	trigger_conditions = [Enums.TriggerCondition.ON_BATTLE_START, Enums.TriggerCondition.ON_ATTACKED]
 
 # ============================================================================
 # TRIGGER EXECUTION
@@ -35,8 +35,14 @@ func _on_battle_start() -> void:
 		return
 	
 	# Grant base counter chance
-	owner_unit.set_counter_chance(BASE_COUNTER_CHANCE)
+	var counter = Counter.new(BASE_COUNTER_CHANCE,5)
+	counter.initialize(owner_unit, owner_unit,5)
+	counter.stack_count = 1
 	
+	# Apply through status system
+	owner_unit.apply_status_effect(counter)
+
+		
 	EventBus.log_debug("%s gained %.0f%% counter from Retaliation passive" % [
 		owner_unit.name, 
 		BASE_COUNTER_CHANCE * 100
@@ -58,5 +64,15 @@ func update_counter_chance() -> void:
 	# For each ally under 50% HP, gain +10% counter
 	# This would require battle_manager access
 	
-	var total_counter = BASE_COUNTER_CHANCE + bonus_counter
-	owner_unit.set_counter_chance(total_counter)
+	
+	
+	var counter = Counter.new(0.1,5)
+	counter.initialize(owner_unit, owner_unit,5)
+	counter.stack_count = 1
+	
+	# Apply through status system
+	var status_system: StatusEffectSystem = owner_unit.battle_manager.get_status_effect_system()
+	if status_system != null:
+		status_system.apply_effect(owner_unit,counter)
+	else:
+		owner_unit.apply_status_effect(counter)

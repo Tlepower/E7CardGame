@@ -77,7 +77,7 @@ static func create_skill2() -> CardData:
 	skill.owner_unit_name = "Apdonia"
 	
 	var damage = DamageEffect.new()
-	damage.is_atk_based = true
+	damage.dmg_type = Enums.MultiplierBase.ATK_based
 	damage.atk_multiplier = 2.9 # 290% damage
 	damage.target_type = Enums.TargetType.SINGLE_ENEMY
 	damage.can_crit = true
@@ -98,7 +98,7 @@ static func create_ultimate() -> UltimateData:
 	ult.target_type = Enums.TargetType.SINGLE_ENEMY
 	
 	var damage = DamageEffect.new()
-	damage.is_atk_based = true
+	damage.dmg_type = Enums.MultiplierBase.ATK_based
 	damage.atk_multiplier = 4.5 # 450% base damage
 	damage.target_type = Enums.TargetType.SINGLE_ENEMY
 	damage.can_crit = true 

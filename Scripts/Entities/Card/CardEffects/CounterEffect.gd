@@ -15,13 +15,16 @@ class_name CounterEffect
 ## Number of stacks to apply
 @export var stack_count: int = 1
 
+## Number of turns
+@export var turns: int = 1
+
 # ============================================================================
 # INITIALIZATION
 # ============================================================================
 
 func _init(chance: float = 0.5, turns: int = 2, stacks: int = 1) -> void:
 	effect_name = "Grant Counter"
-	description = "Grant %.0f%% counter chance for %d turns" % (chance * 100) # and turn
+	description = "Grant %.0f%% counter chance for %d turns" % [(chance * 100), turns] # and turn
 	target_type = Enums.TargetType.SINGLE_ALLY
 	counter_chance = chance
 	duration = turns
@@ -58,4 +61,4 @@ func execute_on_single_target(caster: Node, target: Node, game_state: Node) -> v
 # ============================================================================
 
 func get_description() -> String:
-	return "Grant %.0f%% counter chance for %d turns" % (counter_chance * 100) # desciption
+	return "Grant %.0f%% counter chance for %d turns" % [(counter_chance * 100), turns] # desciption

@@ -54,7 +54,7 @@ static func create_skill1() -> CardData:
 	
 	# Add damage effect
 	var damage = DamageEffect.new()
-	damage.is_atk_based = true
+	damage.dmg_type = Enums.MultiplierBase.ATK_based
 	damage.atk_multiplier = 1.5  # 150% ATK
 	damage.damage_type = Enums.DamageType.PHYSICAL
 	damage.def_ignore = 0.0
@@ -103,7 +103,7 @@ static func create_ultimate() -> UltimateData:
 	
 	# Damage effect
 	var damage = DamageEffect.new()
-	damage.is_atk_based = true
+	damage.dmg_type = Enums.MultiplierBase.ATK_based
 	damage.atk_multiplier = 2.5  # 250% ATK
 	damage.damage_type = Enums.DamageType.PHYSICAL
 	damage.def_ignore = 0.2  # Ignore 20% DEF

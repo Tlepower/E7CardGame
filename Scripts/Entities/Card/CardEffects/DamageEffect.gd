@@ -94,23 +94,11 @@ func execute_on_single_target(caster: Node, target: Node, game_state: Node) -> v
 				can_crit,
 				force_crit
 				)
-		elif  is_atk_based:
-			# ATK-based damage calculation
-			damage_amount = damage_calc.calculate_damage(
-				caster,
-				target,
-				atk_multiplier,
-				def_ignore,
-				damage_multiplier,
-				dmg_type,
-				can_crit,
-				force_crit
-			)
 		else:
 			# Fixed damage
 			damage_amount = int(base_damage * damage_multiplier)
 		
-		EventBus.log_debug("%s dealt %d damage to %s %s" % [caster.name, damage_amount, target.name, "with a crit" if force_crit else ""], "DamageEffect")
+		# EventBus.log_debug("%s dealt %d damage to %s %s" % [caster.name, damage_amount, target.name, "with a crit" if force_crit else ""], "DamageEffect")
 		
 		# Apply damage
 		var is_true = (damage_type == Enums.DamageType.TRUE)

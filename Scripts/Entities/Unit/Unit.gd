@@ -143,9 +143,9 @@ func initialize_from_data(data: UnitData, team_side: Enums.Team) -> void:
 	# Initialize AR (starting at 0, will be randomized or set by battle manager)
 	action_readiness = 0.0
 	
-	_trigger_passive(Enums.TriggerCondition.ON_BATTLE_START, {})
-	
 	EventBus.log_debug("Unit '%s' initialized for team %s" % [name, Enums.team_to_string(team)], "Unit")
+	
+	_trigger_passive(Enums.TriggerCondition.ON_BATTLE_START, {})
 
 # ============================================================================
 # HP MANAGEMENT
@@ -775,7 +775,7 @@ func subtract_counter_chance(chance: float) -> void:
 	
 # check if you get to counter
 func should_counter() -> bool:
-	if counter_chance <= 0:
+	if current_stats.counter_rate <= 0.0:
 		return false
 	return randf() <= current_stats.counter_rate
 	# return randf() <= counter_chance

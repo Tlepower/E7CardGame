@@ -43,11 +43,11 @@ func calculate_damage(
 	if is_crit:
 		crit_multiplier = attacker_stats.crit_damage
 	
-	# Apply attacker's damage multiplier stat
-	var total_damage_mult = damage_multiplier * attacker_stats.damage_multiplier
-	
 	# Damage Dealt = Base Atk × Atk% × (1 + Crit Multiplier) × Dmg Multiplier
-	var damage_dealt = base_dmg * dmg_multiplier * (crit_multiplier) * total_damage_mult
+	var damage_dealt = base_dmg * dmg_multiplier * crit_multiplier * damage_multiplier
+	
+	# Apply the final damage_multiplier
+	damage_dealt = damage_dealt + attacker_stats.damage_multiplier
 	
 	# Step 2: Calculate damage received (defense formula)
 	var base_def = defender_stats.get_effective_def()
@@ -58,7 +58,7 @@ func calculate_damage(
 	# Defense value after ignore
 	var effective_def = (1.0 - def_ignore) * base_def * def_multiplier
 	
-	# Damage reduction formula: Damage / (Damage + Effective Defense)
+	# Damage reduction formula: Damage / (1.0 + Effective Defense / Damage)
 	var damage_after_def = damage_dealt / (1.0 + (effective_def / damage_dealt))
 	
 	# Apply defender's damage taken multiplier
@@ -118,9 +118,12 @@ func apply_damage(
 	# Apply remaining damage to HP
 	if damage_to_apply > 0:
 		target.take_damage(damage_to_apply, is_true_damage)
-	
-	# Emit signal
-	EventBus.damage_dealt.emit(source, target, amount, is_true_damage)
+		# Emit signal
+		EventBus.damage_dealt.emit(source, target, amount, is_true_damage)
+		EventBus.log_debug("%s dealt %d damage to %s" % [source.name, damage_to_apply, target.name, ], "DamageCalculator")
+		# counter check
+		if target.should_counter(): #and source.is_class("Unit"):
+			await target.counter_attack(source)
 	
 	# Trigger passives
 	if source != null and source.has_method("_trigger_passive"):

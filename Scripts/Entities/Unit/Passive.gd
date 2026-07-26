@@ -59,7 +59,7 @@ class_name Passive
 # ============================================================================
 
 ## The unit that owns this passive
-var owner_unit: Node = null
+var owner_unit: Unit = null
 
 ## Is the passive currently active?
 var is_active: bool = true

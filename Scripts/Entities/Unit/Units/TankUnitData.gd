@@ -66,7 +66,7 @@ static func create_skill1() -> CardData:
 	# Grant self massive counter
 	var counter = CounterEffect.new(1.0, 2, 1)  # 100% counter for 2 turns
 	
-	skill.effects = [counter]
+	skill.effects.append(counter)
 	
 	return skill
 
@@ -90,7 +90,8 @@ static func create_skill2() -> CardData:
 	buff.status_effect_template = def_buff
 	buff.duration = 3
 	
-	skill.effects = [counter, buff]
+	skill.effects.append(counter)
+	skill.effects.append(buff)
 	
 	return skill
 
@@ -112,6 +113,7 @@ static func create_ultimate() -> UltimateData:
 	buff.status_effect_template = def_buff
 	buff.duration = 3
 	
-	ult.effects = [counter, buff]
+	ult.effects.append(counter)
+	ult.effects.append(buff)
 	
 	return ult

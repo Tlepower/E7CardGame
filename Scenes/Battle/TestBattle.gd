@@ -98,20 +98,22 @@ func create_player_units() -> Array:
 		#MageUnitData.create(),
 		#DemonKingUnitData.create(),
 		#AssassinUnitData.create(),
-		ReaperVampireUnitData.create(),
-		#FencerUnitData.create()
-		SniperUnitData.create()
+		#ReaperVampireUnitData.create(),
+		FencerUnitData.create(),
+		SniperUnitData.create(),
+		#TankUnitData.create()
 	]
 
 func create_enemy_units() -> Array:
 	print("Creating enemy units...")
 	# Enemy team has same composition
 	return [
-		#ReaperVampireUnitData.create(),
-		WarriorUnitData.create(),
-		#AssassinUnitData.create()
+		ReaperVampireUnitData.create(),
+		#WarriorUnitData.create(),
+		#AssassinUnitData.create(),
 		#MageUnitData.create(),
-		HealerUnitData.create()
+		#HealerUnitData.create()
+		TankUnitData.create()
 	]
 
 # ============================================================================

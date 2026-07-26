@@ -125,7 +125,7 @@ func _attack_single_target(caster: Node, target: Node, game_state: Node) -> void
 		var is_true = (damage_type == Enums.DamageType.TRUE)
 		damage_calc.apply_damage(caster, target, damage_amount, is_damaged_share_ignored, is_true)
 		
-		EventBus.log_debug("%s dealt %d damage to %s" % [caster.name, damage_amount, target.name], "BasicAttack")
+		# EventBus.log_debug("%s dealt %d damage to %s" % [caster.name, damage_amount, target.name], "BasicAttack")
 		
 		# Apply additional effects (if chance succeeds)
 		if not additional_effects.is_empty() and randf() <= effect_chance:
