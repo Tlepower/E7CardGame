@@ -38,6 +38,7 @@ var last_card = null
 ## Reference to battle manager
 var battle_manager: BattleManager = null
 
+
 # ============================================================================
 # INITIALIZATION
 # ============================================================================
@@ -102,7 +103,7 @@ func _offer_priority() -> void:
 		# player_passes(priority_player)
 		# Human player - UI will call player_plays_card or player_passes
 		# We wait for those calls
-		pass
+		await _handle_human_priority()
 	
 ## Handle AI priority (AI decides whether to play quick play card)
 func _handle_ai_priority() -> void:
@@ -115,7 +116,11 @@ func _handle_ai_priority() -> void:
 		player_passes(priority_player)
 		
 func _handle_human_priority() -> void:
-	pass
+	var current_unit: Unit = battle_manager.turn_manager.current_unit
+	if current_unit.team == Enums.Team.PLAYER:
+		pass
+	else:
+		player_passes(priority_player)
 
 ## Player plays a quick play card
 func player_plays_card(card: Node, player: Node, target, caster: Node) -> void:
