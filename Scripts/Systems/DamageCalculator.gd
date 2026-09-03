@@ -9,7 +9,7 @@ class_name DamageCalculator
 # Damage Dealt = Base Atk × Atk% × (1 + Crit Multiplier) × Dmg Multiplier
 # Damage Received = True Damage + Damage Dealt + (Damage Dealt / (Damage Dealt + Def Ignore × Base Def × Def% × Def Multiplier))
 # ============================================================================
-
+var CRIT: bool
 ## Calculate damage amount (before applying)
 ## Returns the final damage number
 func calculate_damage(
@@ -42,6 +42,9 @@ func calculate_damage(
 	var crit_multiplier = 1.0
 	if is_crit:
 		crit_multiplier = attacker_stats.crit_damage
+		CRIT = true
+	else:
+		CRIT = false
 	
 	# Damage Dealt = Base Atk × Atk% × (1 + Crit Multiplier) × Dmg Multiplier
 	var damage_dealt = base_dmg * dmg_multiplier * crit_multiplier * damage_multiplier
@@ -120,7 +123,7 @@ func apply_damage(
 		target.take_damage(damage_to_apply, is_true_damage)
 		# Emit signal
 		EventBus.damage_dealt.emit(source, target, amount, is_true_damage)
-		EventBus.log_debug("%s dealt %d damage to %s" % [source.name, damage_to_apply, target.name, ], "DamageCalculator")
+		EventBus.log_debug("%s dealt %d damage to %s %s" % [source.name, damage_to_apply, target.name, "with a Critial hit" if CRIT == true else "" ], "DamageCalculator")
 		# counter check
 		if target.should_counter(): #and source.is_class("Unit"):
 			await target.counter_attack(source)
