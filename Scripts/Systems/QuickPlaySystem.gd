@@ -118,6 +118,7 @@ func _handle_ai_priority() -> void:
 func _handle_human_priority() -> void:
 	var current_unit: Unit = battle_manager.turn_manager.current_unit
 	if current_unit.team == Enums.Team.PLAYER:
+		## TODO fress the game 
 		pass
 	else:
 		player_passes(priority_player)
