@@ -65,10 +65,12 @@ func initialize_from_data(data: CardData, player: Node) -> void:
 ## Check if this card can be played
 func can_play(game_state: Node) -> bool:
 	if card_data == null or owner_player == null:
+		EventBus.show_error("Cannot play card: %s because card data or owner doesnt exist" % get_display_name())
 		return false
 	
 	# Must be in hand
 	if not in_hand:
+		EventBus.show_error("Cannot play card: %s because card is not in hand" % get_display_name())
 		return false
 	
 	# Check mana cost
@@ -77,16 +79,19 @@ func can_play(game_state: Node) -> bool:
 	
 	# Check if we have valid targets
 	if not _has_valid_targets(game_state) and card_data.target_type != Enums.TargetType.SELF:
+		EventBus.show_error("Cannot play card: %s because card doesn't have valid targets" % get_display_name())
 		return false
 		
 	var turn_manager = game_state.get_node_or_null("TurnManager")
 	if turn_manager == null:
+		EventBus.show_error("Cannot play card: %s because turn_manager doesn't exist" % get_display_name())
 		return true
 	var current_unit = turn_manager.current_unit
 	
 	# Check if the current unit is using other's cards
 	if card_data.is_skill_card():
 		if current_unit.unit_data.unit_name != card_data.owner_unit_name:
+			EventBus.show_error("Cannot play card: %s because current unit is not the owner of the card" % get_display_name())
 			return false
 	
 	# Check if it's the right time to play (quick play vs main phase)
