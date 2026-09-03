@@ -154,7 +154,7 @@ func _get_owner_team() -> Enums.Team:
 ## Play this card
 func play(target, game_state: Node) -> void:
 	if not can_play(game_state):
-		EventBus.show_error("Cannot play card: %s" % get_display_name())
+		#EventBus.show_error("Cannot play card: %s" % get_display_name())
 		return
 	
 	EventBus.log_debug("Playing card '%s' [ID:%d]" % [name, instance_id], "Card")
