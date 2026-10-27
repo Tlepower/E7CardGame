@@ -5,6 +5,7 @@
 [ext_resource type="FontFile" path="res://Assets/handwriting-black-draft_DEMO.otf" id="3_0niy3"]
 [ext_resource type="FontFile" path="res://Assets/Typo Draft Demo.otf" id="4_xnb5y"]
 
+
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_epypp"]
 texture = ExtResource("2_0wpc2")
 
