@@ -1,0 +1,124 @@
+[gd_scene load_steps=9 format=3 uid="uid://ct60d5h60ww3m"]
+
+[ext_resource type="Script" uid="uid://b12vkht1omfx2" path="res://Main_Meun.gd" id="1_1xoo4"]
+[ext_resource type="Texture2D" uid="uid://cwklcabxmqjl3" path="res://Assets/coding-background-zmygixkpkncbe0hs.jpg" id="2_0wpc2"]
+[ext_resource type="FontFile" uid="uid://b4qrxdl1t6pg2" path="res://Assets/handwriting-black-draft_DEMO.otf" id="3_0niy3"]
+[ext_resource type="FontFile" uid="uid://b8eu4533akgwv" path="res://Assets/Typo Draft Demo.otf" id="4_xnb5y"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_epypp"]
+texture = ExtResource("2_0wpc2")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0e48y"]
+bg_color = Color(1, 1, 0.9843137, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_epypp"]
+bg_color = Color(0.45416194, 0.6059804, 0.83582187, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_epypp"]
+
+[node name="Main _meun" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_1xoo4")
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_epypp")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -168.75
+offset_top = -136.0
+offset_right = 168.75
+offset_bottom = 136.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 15
+
+[node name="Start Game" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0.2895679, 0.13124272, 0.13767469, 1)
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_pressed_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_0niy3")
+theme_override_font_sizes/font_size = 32
+theme_override_styles/normal = SubResource("StyleBoxFlat_0e48y")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_epypp")
+theme_override_styles/hover = SubResource("StyleBoxFlat_0e48y")
+theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_0e48y")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_epypp")
+text = "Start Game"
+
+[node name="Option" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0.2895679, 0.13124272, 0.13767469, 1)
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_pressed_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_0niy3")
+theme_override_font_sizes/font_size = 32
+theme_override_styles/normal = SubResource("StyleBoxFlat_0e48y")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_epypp")
+theme_override_styles/hover = SubResource("StyleBoxFlat_0e48y")
+theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_0e48y")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_epypp")
+text = "Option"
+
+[node name="Exit" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0.2895679, 0.13124272, 0.13767469, 1)
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_pressed_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_0niy3")
+theme_override_font_sizes/font_size = 32
+theme_override_styles/normal = SubResource("StyleBoxFlat_0e48y")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_epypp")
+theme_override_styles/hover = SubResource("StyleBoxFlat_0e48y")
+theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_0e48y")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_epypp")
+text = "Exit"
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -220.0
+offset_right = 220.0
+offset_bottom = 141.0
+grow_horizontal = 2
+theme_override_fonts/font = ExtResource("4_xnb5y")
+theme_override_font_sizes/font_size = 58
+text = "E7CardGame"
+horizontal_alignment = 1
+vertical_alignment = 2
+
+[connection signal="pressed" from="VBoxContainer/Start Game" to="." method="_on_start_game_pressed"]
+[connection signal="pressed" from="VBoxContainer/Exit" to="." method="_on_exit_pressed"]
