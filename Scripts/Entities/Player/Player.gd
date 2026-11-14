@@ -96,8 +96,8 @@ func get_units() -> Array[Node]:
 	return units.duplicate()
 
 ## Get only alive units
-func get_alive_units() -> Array[Node]:
-	var alive: Array[Node] = []
+func get_alive_units() -> Array[Unit]:
+	var alive: Array[Unit] = []
 	
 	for unit in units:
 		if unit.is_alive():

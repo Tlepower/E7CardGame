@@ -40,10 +40,10 @@ var Type: Enums.ElementType = Enums.ElementType.BLANK
 @export var passive_script: Script  # Must extend Passive class
 
 ## Skill 1 card data (first skill card)
-@export var skill1_card_data: Resource  # CardData
+var skill1_card_data: CardData  # CardData
 
 ## Skill 2 card data (second skill card)
-@export var skill2_card_data: Resource  # CardData
+var skill2_card_data: CardData  # CardData
 
 ## Ultimate ability data
 @export var ultimate_data: UltimateData
@@ -113,8 +113,8 @@ func create_instance(team: Enums.Team) -> Node:
 # ============================================================================
 
 ## Get all skill card datas as an array
-func get_skill_cards() -> Array[Resource]:
-	var skills: Array[Resource] = []
+func get_skill_cards() -> Array[CardData]:
+	var skills: Array[CardData] = []
 	if skill1_card_data != null:
 		skills.append(skill1_card_data)
 	if skill2_card_data != null:

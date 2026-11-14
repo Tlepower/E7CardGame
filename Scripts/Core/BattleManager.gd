@@ -257,20 +257,50 @@ func play_card(card: Node, player_node: Player, target) -> void:
 		card.pay_mana_cost(self)
 	# Play the card
 	# await card.play(target, self)
-	if not quick_play_system.is_window_active():
-		await quick_play_system.open_window("%s just played a card" % [player_node.get_display_name()],player_node,get_opponent(player_node))
-		
-	await quick_play_system.player_plays_card(card,player_node,target,current_unit)
+	#if not quick_play_system.is_window_active():
+		#await quick_play_system.open_window("%s just played a card" % [player_node.get_display_name()],player_node,get_opponent(player_node))
+	#await quick_play_system.player_plays_card(card,player_node,target,current_unit)
+	await quick_play_system.start_chain(card,player_node,get_opponent(player_node),target,current_unit)
 	
 	# Mark action taken
 	turn_manager.mark_action_taken()
 	
-	# Open quick play window for Quick Play cards
-	# Note: Per updated specs, ultimates are NOT quick play
-	# Only certain cards marked as quick_play
-	# Since we just played a card, we don't open window for our own card
-	# Quick play window would be for responding to opponent's cards
-	# This may need adjustment based on exact game rules
+# Open quick play window for Quick Play cards
+# Note: Per updated specs, ultimates are NOT quick play
+# Only certain cards marked as quick_play
+# Since we just played a card, we don't open window for our own card
+# Quick play window would be for responding to opponent's cards
+func play_quick_play_card(
+	card: Node,
+	player_node: Player,
+	target,
+	caster: Unit
+) -> void:
+	if card == null or player_node == null or caster == null:
+		push_error("BattleManager: null card, player or caster")
+		return
+	# Verify that this player currently has priority
+	if not quick_play_system.can_play_quick_card(
+		player_node,
+		card
+	):
+		push_error("BattleManager: cannot play Quick Play card")
+		return
+	# Verify that the caster belongs to the responding player
+	if caster not in player_node.get_alive_units():
+		push_error("BattleManager: invalid Quick Play caster")
+		return
+	# Check and pay mana
+	if not card.can_afford_mana(self):
+		return
+	card.pay_mana_cost(self)
+	# Add response to the existing stack
+	quick_play_system.player_plays_card(
+		card,
+		player_node,
+		target,
+		caster
+	)
 
 ## Use basic attack
 func use_basic_attack(unit: Node, target: Node) -> void:

@@ -96,10 +96,10 @@ func create_player_units() -> Array:
 	return [
 		#WarriorUnitData.create(),
 		#MageUnitData.create(),
-		#DemonKingUnitData.create(),
-		#AssassinUnitData.create(),
+		DemonKingUnitData.create(),
+		AssassinUnitData.create(),
 		#ReaperVampireUnitData.create(),
-		FencerUnitData.create(),
+		#FencerUnitData.create(),
 		SniperUnitData.create(),
 		#TankUnitData.create()
 	]
@@ -112,8 +112,9 @@ func create_enemy_units() -> Array:
 		#WarriorUnitData.create(),
 		#AssassinUnitData.create(),
 		#MageUnitData.create(),
-		#HealerUnitData.create()
-		TankUnitData.create()
+		HealerUnitData.create(),
+		#TankUnitData.create()
+		FencerUnitData.create(),
 	]
 
 # ============================================================================
@@ -278,7 +279,27 @@ func print_hands() -> void:
 func play_Card(targets) -> void:
 	if targets == null:
 		return
-	await battle_manager.play_card(abilily,battle_manager.player,targets)
+	
+	var cardAbility: Card
+	if abilily is Card:
+		cardAbility = abilily
+	var response_caster = cardAbility.get_owner_unit()
+	
+	var quickplaysystem = battle_manager.get_quick_play_system()
+	if quickplaysystem.is_window_active():
+		await battle_manager.play_quick_play_card(
+			abilily,
+			battle_manager.player,
+			targets,
+			response_caster
+			)
+	else:
+		await battle_manager.play_card(
+			abilily,
+			battle_manager.player,
+			targets
+		)
+	#await battle_manager.play_card(abilily,battle_manager.player,targets)
 	print("Finshed playing %s " % [abilily.get_display_name()])
 	targeting = false
 	targetunits = []

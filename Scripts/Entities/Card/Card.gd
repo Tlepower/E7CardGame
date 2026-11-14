@@ -11,7 +11,7 @@ class_name Card
 var card_data: CardData = null
 
 ## Player who owns this card
-var owner_player: Node = null
+var owner_player: Player = null
 
 ## Unique instance ID for this specific card
 var instance_id: int = 0
@@ -323,6 +323,16 @@ func is_basic_card() -> bool:
 ## Get owner unit name (for skill cards)
 func get_owner_unit_name() -> String:
 	return card_data.owner_unit_name if card_data else ""
+
+## Get owner unit (for skill cards)
+func get_owner_unit() -> Unit:
+	var list = owner_player.get_alive_units()
+	for unit in list:
+		var skillcards = unit.unit_data.get_skill_cards()
+		for card in skillcards:
+			if card == self.card_data:
+				return unit
+	return null
 
 ## Get card type
 func get_card_type() -> Enums.CardType:

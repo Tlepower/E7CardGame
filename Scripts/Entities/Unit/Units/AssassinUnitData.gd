@@ -30,7 +30,7 @@ static func create_stats() -> UnitStats:
 	stats.max_hp = 850  # Fragile
 	stats.base_atk = 160  # High damage
 	stats.base_def = 40   # Low defense
-	stats.speed = 125     # Very fast!
+	stats.speed = 115     # Fast!
 	stats.crit_rate = 0.30  # 30% - High crit
 	stats.crit_damage = 2.0  # 200% - High crit damage
 	stats.effectiveness = 0.20

@@ -7,6 +7,13 @@ class_name QuickPlaySystem
 # ============================================================================
 # QUICK PLAY STATE
 # ============================================================================
+signal priority_decision_made
+
+const HUMAN_PRIORITY_TIME: float = 30.0
+
+var priority_loop_running: bool = false
+var waiting_for_human: bool = false
+var human_response_timer: Timer
 
 ## Is the quick play window currently active?
 var is_quick_play_window_active: bool = false
@@ -42,9 +49,13 @@ var battle_manager: BattleManager = null
 # ============================================================================
 # INITIALIZATION
 # ============================================================================
-
 func initialize(manager: Node) -> void:
+	human_response_timer = Timer.new()
+	human_response_timer.one_shot = true
+	add_child(human_response_timer)
 	battle_manager = manager
+	human_response_timer.timeout.connect(_on_human_timer_timeout)
+	
 	EventBus.log_debug("QuickPlaySystem initialized", "QuickPlay")
 
 # ============================================================================
@@ -53,6 +64,47 @@ func initialize(manager: Node) -> void:
 
 ## Open quick play window
 ## triggering_action: description of what triggered this (e.g., "Fireball card played")
+func start_chain(
+	card: Node,
+	turn_player: Player,
+	opponent: Player,
+	target,
+	caster: Node
+) -> void:
+
+	if is_quick_play_window_active:
+		push_warning("QuickPlaySystem: window already active")
+		return
+
+	is_quick_play_window_active = true
+	consecutive_passes = 0
+	effect_stack.clear()
+
+	# Add the original card to the stack
+	effect_stack.append({
+		"card": card,
+		"player": turn_player,
+		"target": target,
+		"caster": caster
+	})
+
+	last_card = card
+
+	# Opponent receives priority first
+	priority_player = opponent
+	other_player = turn_player
+
+	EventBus.quick_play_window_opened.emit(
+		"%s just played a card" % turn_player.get_display_name()
+	)
+
+	EventBus.log_debug(
+		"Quick Play window opened. Opponent receives priority.",
+		"QuickPlay"
+		)
+
+	await _run_priority_loop()
+"""
 func open_window(triggering_action: String, turn_player: Player, opponent: Player) -> void:
 	if is_quick_play_window_active:
 		push_warning("QuickPlaySystem: window already active")
@@ -70,7 +122,7 @@ func open_window(triggering_action: String, turn_player: Player, opponent: Playe
 	
 	# Start priority offering
 	await _offer_priority()
-
+"""
 ## Close quick play window and resolve stack
 func close_window() -> void:
 	if not is_quick_play_window_active:
@@ -87,6 +139,43 @@ func close_window() -> void:
 # ============================================================================
 # PRIORITY SYSTEM
 # ============================================================================
+func _run_priority_loop() -> void:
+	if priority_loop_running:
+		return
+	priority_loop_running = true
+	while is_quick_play_window_active:
+		# Both players have passed
+		if consecutive_passes >= 2:
+			await close_window()
+			break
+		var current_priority = priority_player
+		EventBus.quick_play_priority_changed.emit(
+			current_priority
+			)
+		EventBus.log_debug(
+			"%s has priority" % current_priority.get_display_name(),
+			"QuickPlay"
+		)
+		if current_priority.is_ai:
+			# AI gets a short thinking period
+			await get_tree().create_timer(0.5).timeout
+			# Make sure priority hasn't changed
+			if (
+				is_quick_play_window_active
+				and priority_player == current_priority
+			):
+				player_passes(current_priority)
+		else:
+			# Human receives a response window
+			waiting_for_human = true
+			EventBus.log_debug("Human timer started","Quickplay")
+			human_response_timer.start(HUMAN_PRIORITY_TIME)
+			# Wait until the human plays a card, passes,
+			# or the timer expires.
+			await priority_decision_made
+			waiting_for_human = false
+			human_response_timer.stop()
+	priority_loop_running = false
 
 ## Offer priority to a player
 func _offer_priority() -> void:
@@ -118,6 +207,8 @@ func _handle_ai_priority() -> void:
 func _handle_human_priority() -> void:
 	var current_unit: Unit = battle_manager.turn_manager.current_unit
 	if current_unit.team == Enums.Team.PLAYER:
+		for i in 30:
+			await get_tree().create_timer(1)
 		pass
 	else:
 		player_passes(priority_player)
@@ -132,7 +223,7 @@ func player_plays_card(card: Node, player: Node, target, caster: Node) -> void:
 		push_error("QuickPlaySystem: player does not have priority")
 		return
 	
-	if not card.is_quick_play() and last_card != null:
+	if not card.is_quick_play():
 		push_error("QuickPlaySystem: card is not Quick Play")
 		return
 	
@@ -159,11 +250,14 @@ func player_plays_card(card: Node, player: Node, target, caster: Node) -> void:
 	consecutive_passes = 0
 	
 	# update the last card on the stack
-	last_card = effect_stack.back().card
+	last_card = card
 	
 	# Pass priority to other player
 	_switch_priority()
-	await _offer_priority()
+	#await _offer_priority()
+	
+	## emit so that the timer is stopped
+	priority_decision_made.emit()
 
 ## Player passes priority
 func player_passes(player: Node) -> void:
@@ -180,19 +274,32 @@ func player_passes(player: Node) -> void:
 	consecutive_passes += 1
 	
 	# If both players passed, close window
+	"""
 	if consecutive_passes >= 2:
 		await close_window()
 		return
+	"""
+	if consecutive_passes < 2:
+		_switch_priority()
 	
+	priority_decision_made.emit()
 	# Pass priority to other player
-	_switch_priority()
-	await _offer_priority()
+	#await _offer_priority()
 
 ## Switch priority to other player
 func _switch_priority() -> void:
 	var temp = priority_player
 	priority_player = other_player
 	other_player = temp
+
+func _on_human_timer_timeout() -> void:
+	if not is_quick_play_window_active:
+		return
+	if not priority_player:
+		return
+	if not priority_player.is_ai:
+		EventBus.log_debug("Human time has expired for quick play","Quickplay")
+		player_passes(priority_player)
 
 # ============================================================================
 # STACK RESOLUTION
