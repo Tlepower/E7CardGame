@@ -128,23 +128,43 @@ func modify_atk_percent(modifier: float) -> void:
 	atk_percent *= modifier
 	atk_percent = maxf(0.0, atk_percent)  # Can't go below 0
 
+## set Attack
+func set_atk_percent(stat: float) -> void:
+	atk_percent = maxf(0.0, stat)
+
 ## Apply a percentage modifier to DEF
 func modify_def_percent(modifier: float) -> void:
 	def_percent *= modifier
 	def_percent = maxf(0.0, def_percent)
+	
+## set Defend
+func set_def_percent(stat: float) -> void:
+	def_percent = maxf(0.0, stat)
 
 ## Apply a percentage modifier to Speed
 func modify_speed_percent(modifier: float) -> void:
 	speed_percent *= modifier
 	speed_percent = maxf(0.0, speed_percent)
 
+## set speed 
+func set_speed_percent(stat: float) -> void:
+	speed_percent = maxf(0.0, stat)
+
 ## Add flat crit rate (clamped to 0-1)
 func add_crit_rate(amount: float) -> void:
 	crit_rate = clampf(crit_rate + amount, 0.0, 1.0)
 
+## set crit rate
+func set_crit_rate(stat: float) -> void:
+	crit_rate = clampf(stat, 0.0, 1.0)
+
 ## Add flat crit damage
 func add_crit_damage(amount: float) -> void:
 	crit_damage = maxf(1.0, crit_damage + amount)
+
+## set crit damange
+func set_crit_damange(stat: float) -> void:
+	crit_damage - maxf(1.0, stat)
 
 ## Add flat effectiveness
 func add_effectiveness(amount: float) -> void:

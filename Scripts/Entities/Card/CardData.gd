@@ -61,11 +61,11 @@ class_name CardData
 
 ## Is this a skill card (belongs to a specific unit)?
 func is_skill_card() -> bool:
-	return not owner_unit_name.is_empty() and card_type == Enums.CardType.SKILL
+	return card_type == Enums.CardType.SKILL
 
 ## Is this a basic card (shared utility cards)?
 func is_basic_card() -> bool:
-	return owner_unit_name.is_empty() and card_type == Enums.CardType.BASIC
+	return card_type == Enums.CardType.BASIC
 
 # ============================================================================
 # VALIDATION
