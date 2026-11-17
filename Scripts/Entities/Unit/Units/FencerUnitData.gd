@@ -39,7 +39,7 @@ static func create_stats() -> UnitStats:
 
 static func create_passive() -> Script:
 	# Evasion passive - gains evasion at battle start
-	return load("res://Scripts/Passives/FullTestEvasion.gd")
+	return load("res://Scripts/Passives/EvasionPassive.gd")
 
 static func create_basic_attack() -> BasicAttackData:
 	var basic = BasicAttackData.new()

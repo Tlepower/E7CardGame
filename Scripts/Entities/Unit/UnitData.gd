@@ -23,7 +23,7 @@ class_name UnitData
 @export_enum("Common", "Rare", "Epic", "Legendary") var rarity: String = "Common"
 
 ## Types (for future use)
-var Type: Enums.ElementType = Enums.ElementType.BLANK
+@export var Type: Enums.ElementType = Enums.ElementType.BLANK
 
 # ============================================================================
 # STATS

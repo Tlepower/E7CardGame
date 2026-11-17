@@ -8,6 +8,7 @@ class_name EvasionPassive
 
 ## Base evasion chance
 const BASE_EVASION_CHANCE: float = 0.25  # 25% base evasion
+const BOUNS_EVASION_CHANCE: float = 0.10 # 10% bouns evasion, 35 total evasion
 
 # ============================================================================
 # INITIALIZATION
@@ -53,13 +54,14 @@ func _update_evasion() -> void:
 		return
 	
 	var bonus_evasion = 0.0
-	
 	# Bonus evasion when wounded
 	if owner_unit.get_hp_percent() < 0.5:
-		bonus_evasion = 0.10  # +10% when below 50% HP
+		bonus_evasion = BOUNS_EVASION_CHANCE 
 	
 	var total_evasion = BASE_EVASION_CHANCE + bonus_evasion
-	owner_unit.set_evasion_chance(total_evasion) # need to be changed 
+	var BaseEvasion = stat_modifiers["Evasion"] 
+	stat_modifiers = {"Evasion" : BaseEvasion + bonus_evasion}
+	apply_aura_to_unit(owner_unit)
 	
 	if bonus_evasion > 0:
 		EventBus.log_debug("%s evasion increased to %.0f%% (wounded)" % [
