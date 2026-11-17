@@ -9,14 +9,15 @@ static func create() -> UnitData:
 	unit.unit_name = ""
 	unit.description = ""
 	unit.rarity = "Common"
+	unit.Type = Enums.ElementType.BLANK
 	
 	# Stats
 	unit.base_stats = create_stats()
 	
 	# Abilities
 	unit.passive_script = create_passive()
-	unit.skill1_card_data = create_skill1()
-	unit.skill2_card_data = create_skill2()
+	unit.skill1_card_data = create_skill1(unit.unit_name)
+	unit.skill2_card_data = create_skill2(unit.unit_name)
 	unit.ultimate_data = create_ultimate()
 	unit.basic_attack_data = create_basic_attack()
 	
@@ -35,9 +36,8 @@ static func create_stats() -> UnitStats:
 	return stats
 
 static func create_passive() -> Script:
-	# return load("res://Scripts/Passives/FullTestEvasion.gd")
-	var passive = Passive.new()
-	return passive
+	#return load("res://Scripts/Passives/PassiveName.gd")
+	return null
 
 static func create_basic_attack() -> BasicAttackData:
 	var basic = BasicAttackData.new()
@@ -50,7 +50,7 @@ static func create_basic_attack() -> BasicAttackData:
 	
 	return basic
 
-static func create_skill1() -> CardData:
+static func create_skill1(name: String) -> CardData:
 	var skill = CardData.new()
 	skill.card_name = ""
 	skill.description = ""
@@ -58,11 +58,11 @@ static func create_skill1() -> CardData:
 	skill.mana_cost = 1
 	skill.is_quick_play = false 
 	skill.target_type = Enums.TargetType.SINGLE_ENEMY
-	skill.owner_unit_name = "" # Name of the character
+	skill.owner_unit_name = name # Name of the character
 	
 	return skill
 
-static func create_skill2() -> CardData:
+static func create_skill2(name: String) -> CardData:
 	var skill = CardData.new()
 	skill.card_name = ""
 	skill.description = ""
@@ -70,7 +70,7 @@ static func create_skill2() -> CardData:
 	skill.mana_cost = 1
 	skill.is_quick_play = false 
 	skill.target_type = Enums.TargetType.SINGLE_ENEMY
-	skill.owner_unit_name = "" # Name of the character
+	skill.owner_unit_name = name # Name of the character
 	
 	return skill
 
